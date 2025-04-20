@@ -1,0 +1,125 @@
+{
+    "boards": [
+        {
+            "app_name": "rt_demo",
+            "board_name": "A2G_TC397_5V_TFT",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../../apps/rt_demo/platform_cfg/tc397_cfg/rt_demo.vcosproject"
+        },
+        {
+            "app_name": "rt_demo",
+            "board_name": "E3650_DEV_KIT",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/semidrive/boards/E3650_DEV_KIT/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../../apps/rt_demo/platform_cfg/e3650_cfg/rt_demo.vcosproject"
+        },
+        {
+            "app_name": "vbslite_demo/vbslite_node1",
+            "board_name": "A2G_TC397_5V_TFT",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node1/platform_cfg/tc397_cfg/vbslite_node1_tc397.vcosproject"
+        },
+        {
+            "app_name": "vbslite_demo/vbslite_node1",
+            "board_name": "E3650_DEV_KIT",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/semidrive/boards/E3650_DEV_KIT/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node1/platform_cfg/e3650_cfg/vbslite_node1_e3650.vcosproject"
+        },
+        {
+            "app_name": "vbslite_demo/vbslite_node2",
+            "board_name": "A2G_TC397_5V_TFT",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node2/platform_cfg/tc397_cfg/vbslite_node2_tc397.vcosproject"
+        },
+        {
+            "app_name": "vbslite_demo/vbslite_node2",
+            "board_name": "E3650_DEV_KIT",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/semidrive/boards/E3650_DEV_KIT/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node2/platform_cfg/e3650_cfg/vbslite_node2_e3650.vcosproject"
+        }
+    ],
+    "is_sim_build": 0,
+    "build_mode": "",
+    "app_name": "",
+    "compiler": "gcc",
+    "build_action": "",
+    "maketool": "make",
+    "toolchain_path": "",
+    "sim_defconfig_gen_path": "../vendor/infineon/boards/sim/scripts/sim_defconfig.py",
+    "sim_board_config": "vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
+    "sim_config": "vendor/infineon/boards/sim/configs/vcos",
+    "extra_config": ["CONFIG_TRICORE_TOOLCHAIN_TASKING=y"],
+    "symlink_data": [
+        {
+            "src": "components",
+            "dst": "apps/components"
+        },
+        {
+            "src": "drivers",
+            "dst": "apps/drivers"
+        },
+        {
+            "src": "examples",
+            "dst": "apps/vcos_examples"
+        },
+        {
+            "src": "tests",
+            "dst": "apps/tests"
+        },
+        {
+            "src": "vendor",
+            "dst": "apps/vendor"
+        },
+        {
+            "src": "external",
+            "dst": "apps/external"
+        },
+        {
+            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/udp.c",
+            "dst": "components/communication/net_protocols/udp/udp.c"
+        },
+        {
+            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/tcp.c",
+            "dst": "components/communication/net_protocols/tcp/tcp.c"
+        },
+        {
+            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/tcp_in.c",
+            "dst": "components/communication/net_protocols/tcp/tcp_in.c"
+        },
+        {
+            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/tcp_out.c",
+            "dst": "components/communication/net_protocols/tcp/tcp_out.c"
+        },
+        {
+            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/etharp.c",
+            "dst": "components/communication/net_protocols/arp/etharp.c"
+        },
+        {
+            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/icmp.c",
+            "dst": "components/communication/net_protocols/icmp/icmp.c"
+        },
+        {
+            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/ip4.c",
+            "dst": "components/communication/net_protocols/ipv4/ip4.c"
+        },
+        {
+            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/ip4_addr.c",
+            "dst": "components/communication/net_protocols/ipv4/ip4_addr.c"
+        },
+        {
+            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/ip4_frag.c",
+            "dst": "components/communication/net_protocols/ipv4/ip4_frag.c"
+        }
+    ]
+}
