@@ -5,7 +5,7 @@
 
 多芯片demo编译统一编译入口到python脚本，python中主要实现了编译框架适配，逻辑清晰，简约明了，且编译命令一致无需区分Windows和Linux。而json文件中则存放不同芯片demo的差异信息，用以给python编译框架提供编译流程中的差异信息
 
-编译器选择上，我们根据不同的芯片demo，支持不同的编译器种类，例如tricore相关芯片支持GCC和tasking、芯驰E3650支持GCC和GHS（Green Hills）等，鉴于开源后方便大家集成调试，我们默认使用免费的GCC编译器
+编译器选择上，我们根据不同的芯片demo，支持不同的编译器种类，例如TriCore相关芯片支持GCC和tasking、芯驰E3650支持GCC和GHS（Green Hills）等，鉴于开源后方便大家集成调试，我们默认使用免费的GCC编译器
 
 ## 2. 代码目录
 vcos_build 源代码在 haloosspace/vcos/build 目录下，目录结构如下图所示

@@ -199,7 +199,7 @@ def symlink_dirs():
 
 def symlink_dir(src_dir="", link_dir=""):
     if os.path.exists(src_dir):
-        if os.path.exists(link_dir):
+        if os.path.lexists(link_dir):
             try:
                 if os.path.islink(link_dir):
                     os.unlink(link_dir)
@@ -471,10 +471,30 @@ def run_main(args):
 
 
 if __name__ == "__main__":
-    start = time.time()
-    parser = new_command_parser()
-    args = parser.parse_args()
-    run_main(args)
-    end = time.time()
-    eclipsed = end - start
-    print("Elapsed %0.2f s" % eclipsed)
+    if os.environ.get("VIRTUAL_ENV"):
+        start = time.time()
+        parser = new_command_parser()
+        args = parser.parse_args()
+        run_main(args)
+        end = time.time()
+        eclipsed = end - start
+        print("Elapsed %0.2f s" % eclipsed)
+    else:
+        if cur_platfm == "windows":
+            python_path = os.path.join(VCOS_ROOT_PATH, ".venv/Scripts/python.exe")
+        else:
+            python_path = os.path.join(VCOS_ROOT_PATH, ".venv/bin/python")
+        if not os.path.exists(python_path):
+            python_path = sys.executable
+        environ = os.environ.copy()
+        environ["VIRTUAL_ENV"] = python_path
+        process = subprocess.Popen(
+            [python_path] + sys.argv,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.STDOUT,
+            text = True,
+            env=environ
+        )
+        for line in iter(process.stdout.readline, ""):
+            print(line.strip())
+        process.wait()
