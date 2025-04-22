@@ -237,7 +237,7 @@ def run_codegen(board_info):
     vcosproject_file_path = os.path.abspath(board_info['vcosproject_file_path'])
     change_vcosprojects_file(board_info)
     process = subprocess.Popen(
-            [sys.executable, codegen_boot, "-p", vcosproject_file_path, "Generate", "--force"],
+            [sys.executable, "-u", codegen_boot, "-p", vcosproject_file_path, "Generate", "--force"],
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
             text = True
@@ -489,7 +489,7 @@ if __name__ == "__main__":
         environ = os.environ.copy()
         environ["VIRTUAL_ENV"] = python_path
         process = subprocess.Popen(
-            [python_path] + sys.argv,
+            [python_path, "-u"] + sys.argv,
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
             text = True,
