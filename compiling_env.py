@@ -31,7 +31,7 @@ LINUX_TOOLS = [{
     "source_dir": "./tricore-gcc-ubuntu",
     "extract_to": "~/compiler-toolchain/tricore",
     "bin_subpath": "tricore-gcc-ubuntu/bin",
-    "verify_cmd": "tricore-gcc --version",
+    "verify_cmd": "tricore-elf-gcc --version",
 }, {
     "name": "ARM GCC",
     "type": "arm",
@@ -40,7 +40,7 @@ LINUX_TOOLS = [{
     "source_dir": "./arm-gcc-ubuntu",
     "extract_to": "~/compiler-toolchain/arm",
     "bin_subpath": "arm-gcc-ubuntu/bin",
-    "verify_cmd": "arm-gcc --version",
+    "verify_cmd": "arm-none-eabi-gcc --version",
 }]
 
 if platform.system().lower() == "windows":
@@ -101,7 +101,7 @@ if platform.system().lower() == "windows":
         "source_dir": "./arm-gcc-win32",
         "extract_to": "C:\\Users\\{}\\compiler".format(os.getenv("USERNAME")),
         "bin_subpath": "arm-gcc-win32/bin",
-        "verify_cmd": "tricore-gcc --version",
+        "verify_cmd": "arm-none-eabi-gcc --version",
     }]
 
 PYTHON_PACKAGES = ["kconfiglib"]
@@ -313,7 +313,6 @@ def install_make(downloads, config):
         if not set_environment_variable(
                 name="MAKE_TOOL_PATH", value=target_dir, scope="system" if is_system_path(target_dir) else "user"):
             print(f"[重要] 请手动设置环境变量 MAKE_TOOL_PATH = {target_dir}")
-        shutil.rmtree(config["extract_to"])
         return True
     except Exception as e:
         print(f"[ERR] Make 安装失败: {str(e)}")
@@ -535,25 +534,24 @@ def main():
                         install_7z(tool["filename"], tool["install_args"])
                         os.remove(tool["filename"])
                 elif tool["type"] == "CMake":
-                    if download_file(tool["url"], tool["filename"]):
-                        install_cmake(tool["filename"], tool["install_args"])
-                        os.remove(tool["filename"])
-                    else:
+                    if not download_file(tool["url"], tool["filename"]) or not install_cmake(
+                            tool["filename"], tool["install_args"]):
                         print(
                             "1. 在CMake 4.0.0 官网安装包(https://github.com/Kitware/CMake/releases/download/v4.0.0/cmake-4.0.0-windows-x86_64.msi) 下载对应Windows版本的CMake工具"
                         )
                         print("2. 双击安装，安装的时候请注意勾选'Add to Path'，以添加到环境变量中")
                         print("3. 用管理员权限重启powershell，执行`cmake --version`，输出版本号即表示安装成功")
-                elif tool["type"] == "ninja":
-                    if download_file(tool["url"], tool["filename"]):
-                        install_ninja(tool["filename"], tool)
+                    if os.path.exists(tool["filename"]):
                         os.remove(tool["filename"])
-                    else:
+                elif tool["type"] == "ninja":
+                    if not download_file(tool["url"], tool["filename"]) or not install_ninja(tool["filename"], tool):
                         print(
                             "1. 如果需要使用ninja进行编译，下载 [ninja 官方Zip压缩包](https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-win.zip)"
                         )
                         print("2. 解压并将ninja.exe文件复制到系统用户的bin路径下(如C:/Users/<YourName>/bin，注意该路径需要添加进环境变量)")
                         print("3. 用管理员权限重启powershell，执行`ninja --version`，输出版本号即表示安装成功")
+                    if os.path.exists(tool["filename"]):
+                        os.remove(tool["filename"])
                 elif tool["type"] == "make":
                     downloads = []
                     for entry in tool["downloads"]:
@@ -569,8 +567,16 @@ def main():
 
                         downloads.append(entry)
                     if len(downloads) == len(tool["downloads"]):
-                        install_make(downloads, tool)
-                        for entry in downloads:
+                        if not install_make(downloads, tool):
+                            print(
+                                "1. 下载 [Make 官方Zip压缩包](https://gnuwin32.sourceforge.net/downlinks/make-bin-zip.php)和[Make依赖包](https://sourceforge.net/projects/gnuwin32/files/make/3.81/make-3.81-dep.zip/download?use_mirror=onboardcloud&download=)"
+                            )
+                            print(
+                                "2. (以3.81版本的make为例)解压并将`make-3.81-bin/bin`文件夹下的make.exe文件和`make-3.81-dep/bin`文件夹下的libiconv2.dll、libintl3.dll文件复制到系统用户的bin路径下(如C:/Users/<YourName>/bin，注意该路径需要添加进环境变量)"
+                            )
+                            print("3. 用管理员权限重启powershell，执行`make --version`，输出版本号即表示安装成功")
+                    for entry in downloads:
+                        if os.path.exists(entry["filename"]):
                             os.remove(entry["filename"])
                 elif tool["type"] == "tricore":
                     z_path = find_7z_windows()
@@ -591,7 +597,7 @@ def main():
                         z_path = "C:/Program Files/7-Zip/7z.exe"
                     result = install_windows_toolchain(tool)
                     if result is False:
-                        print("tricore-gcc-toolchain是Tricore架构的编译器工具链")
+                        print("arm-gcc-toolchain是arm架构的编译器工具链")
                         print("1. 下载[arm-gcc-win32工具链](https://gitee.com/yanxiaoyong_1/arm-gcc-win32)")
                         print("2. arm-gcc-win32下能看到多个7z压缩包。找到编号为001的压缩包，用7zip解压")
                         print("3. 将编译器路径`<your_compiler_path>/arm-gcc-win32/bin`添加到`PATH`环境变量中")
@@ -624,7 +630,7 @@ def main():
                         print("3. 将编译器路径`<your_compiler_path>/arm-gcc-ubuntu/bin`添加到`PATH`环境变量中")
                         print("    1. 按 Win + S 搜索 '环境变量' → 选择 '编辑系统环境变量'")
                         print("    2. 在 '用户变量' 中找到 Path → 点击 '编辑' → '新建' → 添加上述bin路径 → 保存")
-                        print("4. 用管理员权限重启powershell，执行`arm-elf-gcc --version`，如果显示版本号即安装成功")
+                        print("4. 用管理员权限重启powershell，执行`arm-none-eabi-gcc --version`，如果显示版本号即安装成功")
         print("\n=== 安装Python依赖 ===")
         subprocess.run([
             "pip", "install", "kconfiglib", "-i", "https://pypi.tuna.tsinghua.edu.cn/simple", "--trusted-host",

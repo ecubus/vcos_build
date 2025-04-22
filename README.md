@@ -22,11 +22,11 @@ haloosspace
 **编译脚本：**
 ```bash
 cd ./vcos/build
-python3 vcos_build.py -h
+python vcos_build.py -h
 ```
 **编译参数：**
 ```bash
-lixiang:~/vcos/buid$ python3 vcos_build.py -h
+lixiang:~/vcos/buid$ python vcos_build.py -h
 usage: vcos_build.py [-h] [-board_name {A2G_TC397_5V_TFT,E3650_DEV_KIT}] [-app_name APP_NAME] [-sim {0,1}] [-compiler {gcc,ghs,tasking}] [-mode {release,debug}] [-maketool {make,ninja}] [-update] [-clean] [-codegen] [-gcmake] [-fc] [-ic] [-all]
 
 VCOS Build
@@ -55,18 +55,22 @@ optional arguments:
 ```bash
 ## 拆分各步骤进行编译 ##
 # 选项数据配置，可以在一条命令中配置多项数据
-python3 vcos_build.py -app_name xx -borad_name xx -compiler gcc     # 选择工程和编译器，生成 ./tmp/**_temp.json 保存编译信息
-python3 vcos_build.py -app_name xx -borad_name xx -sim [0 | 1]      # 选择sim工程，0：非sim编译，1：sim编译
-python3 vcos_build.py -app_name xx -borad_name xx -maketool xx      # 指定make toochain工具，[make | ninja]
+python vcos_build.py -app_name xx -borad_name xx -compiler gcc     # 选择工程和编译器，生成 ./tmp/**_temp.json 保存编译信息
+python vcos_build.py -app_name xx -borad_name xx -sim [0 | 1]      # 选择sim工程，0：非sim编译，1：sim编译
+python vcos_build.py -app_name xx -borad_name xx -maketool xx      # 指定make toochain工具，[make | ninja]
 # 根据上述配置数据，进行编译
-python3 vcos_build.py -app_name xx -borad_name xx -clean            # clean output
-python3 vcos_build.py -app_name xx -borad_name xx -codegen          # 动态代码生成
-python3 vcos_build.py -app_name xx -borad_name xx -gcmake           # 生成 cmake 编译依赖配置
-python3 vcos_build.py -app_name xx -borad_name xx -fc               # 全量编译生成所需二进制镜像文件
-python3 vcos_build.py -app_name xx -borad_name xx -ic               # 增量编译生成所需二进制镜像文件
+python vcos_build.py -app_name xx -borad_name xx -clean            # clean output
+python vcos_build.py -app_name xx -borad_name xx -codegen          # 动态代码生成
+python vcos_build.py -app_name xx -borad_name xx -gcmake           # 生成 cmake 编译依赖配置
+python vcos_build.py -app_name xx -borad_name xx -fc               # 全量编译生成所需二进制镜像文件
+python vcos_build.py -app_name xx -borad_name xx -ic               # 增量编译生成所需二进制镜像文件
 ```
 ```bash
 ## 合并各步骤，一行命令进行编译 ##
-python3 vcos_build.py -app_name xx -borad_name xx -C gcc -sim [0 | 1] -maketool xx -all   # 仅支持全量
+python vcos_build.py -app_name xx -borad_name xx -C gcc -sim [0 | 1] -maketool xx -all   # 仅支持全量
 ```
-
+**编译结果：**
+```bash
+haloosspace
+└── output
+```

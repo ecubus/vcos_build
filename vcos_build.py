@@ -65,7 +65,12 @@ def choice_board(app_name, board_name, updateType=False):
     codegen_boot = ''
     vcosproject_file_path = ''
     is_sim_build = 0
-    maketool = "MinGW Makefiles"
+    if cur_platfm == 'windows':
+        maketool = "MinGW Makefiles"
+    elif cur_platfm == 'linux':
+        maketool = "Unix Makefiles"
+    else:
+        maketool = ""
 
     with open('./build_config.json', 'r', encoding='utf-8') as f:
         cfg = json.loads(f.read())
@@ -153,8 +158,12 @@ def set_compiler_process(board_info):
     board_info['board_config'] = dst_path
     extra_config = board_info['extra_config']
     for extra_line in extra_config:
-        os.system(f"sed -i '$a\{extra_line}' {os.path.join(dst_path, 'defconfig')}")
-
+        with open(os.path.join(dst_path, 'defconfig'), 'r', encoding='utf-8') as fr:
+            content = fr.readlines()
+            if extra_line not in content:
+                content += '\n' + extra_line + '\n'
+        with open(os.path.join(dst_path, 'defconfig'), 'w', encoding='utf-8') as fw:
+            fw.writelines(content)
     set_compiler_path_env(compiler)
     board_info["output_path"] = os.path.join(VCOS_ROOT_PATH, "..", "output", f'{app_name}_{board_name}_{compiler}')
     return board_info
@@ -162,9 +171,13 @@ def set_compiler_process(board_info):
 def set_make_tool_path(maketool, board_info):
     board_info["toolchain_path"] = ""
     if maketool == 'make':
-        board_info["maketool"] = "MinGW Makefiles"
         if cur_platfm == 'windows':
+            board_info["maketool"] = "MinGW Makefiles"
             board_info["toolchain_path"] = os.environ.get("MAKE_TOOL_PATH", None)
+        elif cur_platfm == 'linux':
+            board_info["maketool"] = "Unix Makefiles"
+        else:
+            board_info["maketool"] = ""
     elif maketool == 'ninja':
         board_info["maketool"] = "Ninja"
         if cur_platfm == 'windows':
@@ -187,13 +200,31 @@ def symlink_dirs():
 def symlink_dir(src_dir="", link_dir=""):
     if os.path.exists(src_dir):
         if os.path.exists(link_dir):
-            os.remove(os.path.abspath(link_dir))
+            try:
+                if os.path.islink(link_dir):
+                    os.unlink(link_dir)
+                elif os.path.isfile(link_dir):
+                    os.remove(link_dir)
+                elif os.path.isdir(link_dir):
+                    shutil.rmtree(link_dir)
+                else:
+                    print(f"link_dir is not exists: {link_dir}")
+            except Exception as e:
+                print(f"delete {link_dir} failed: {e}")
         try:
             os.symlink(os.path.relpath(src_dir, os.path.dirname(link_dir)), \
                 link_dir, target_is_directory=True)
         except OSError as e:
             error(f"[ERROR] create symlink link_dir: {link_dir} failed, {e}")
-        print("create symlink link_dir", link_dir, "=>", os.path.relpath(src_dir, os.path.dirname(link_dir)))
+
+
+def run_clean(board_info):
+    output_path = board_info['output_path']
+    if os.path.exists(output_path):
+        try:
+            shutil.rmtree(output_path)
+        except Exception as e:
+            print(f'[ERROR] Clean output path failed, but not return failure! log: {e}')
 
 
 def run_codegen(board_info):
@@ -206,10 +237,10 @@ def run_codegen(board_info):
     vcosproject_file_path = os.path.abspath(board_info['vcosproject_file_path'])
     change_vcosprojects_file(board_info)
     process = subprocess.Popen(
-            ["python", codegen_boot, "-p", vcosproject_file_path, "Generate", "--force"],
+            [sys.executable, codegen_boot, "-p", vcosproject_file_path, "Generate", "--force"],
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
-            text = True,
+            text = True
         )
     for line in iter(process.stdout.readline, ""):
         print(line.strip())
@@ -242,14 +273,11 @@ def sim_defconfig_gen(board_info):
         dest_cfg = board_info["sim_cfg"]
     else:
         dest_cfg = board_info["sim_cfg"] + "_" + compiler
-    sim_predefconfig_cmd = f'python {board_info["sim_defconfig_gen_path"]} -s {board_info["sim_board_cfg"]} -d {dest_cfg}'
-    print(f'sim_defconfig_gen: {sim_predefconfig_cmd}')
     sim_defconfig_gen_ret = subprocess.Popen(
-            args = sim_predefconfig_cmd,
-            shell = True,
+            [sys.executable, board_info["sim_defconfig_gen_path"], "-s", board_info["sim_board_cfg"], "-d", dest_cfg],
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
-            text = True,
+            text = True
         )
     for line in iter(sim_defconfig_gen_ret.stdout.readline, ""):
         print(line.strip())
@@ -281,18 +309,18 @@ def gendate_cmake(board_info):
     if cur_platfm == 'windows':
         if maketool == "Ninja":
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
-                    -G {maketool} -DCMAKE_MAKE_PROGRAM={os.path.join(toolchain_path, "ninja.exe")} \
-                    -DBOARD_NAME={board_name}'
+                    -G \"{maketool}\" -DCMAKE_MAKE_PROGRAM={os.path.join(toolchain_path, "ninja.exe")} \
+                    -DBOARD_NAME={board_name} -DWIN32=1'
         elif maketool == "MinGW Makefiles":
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
                     -G \"{maketool}\" -DCMAKE_MAKE_PROGRAM={os.path.join(toolchain_path, "make.exe")} \
-                    -DBOARD_NAME={board_name}'
+                    -DBOARD_NAME={board_name} -DWIN32=1'
         else:
             gendate_cmake_cmd = 'echo "[ERROR][gendate_cmake] Not support maketool type!"'
     elif cur_platfm == 'linux':
         if compiler == 'gcc':
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
-                -DBOARD_NAME={board_name} -GNinja'
+                -DBOARD_NAME={board_name} -G \"{maketool}\"'
         else:
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
                 -DBOARD_NAME={board_name}'
@@ -304,7 +332,7 @@ def gendate_cmake(board_info):
             shell = True,
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
-            text = True,
+            text = True
         )
     for line in iter(gendate_cmake_ret.stdout.readline, ""):
         print(line.strip())
@@ -334,7 +362,7 @@ def cmake_build(board_info):
             shell = True,
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
-            text = True,
+            text = True
         )
     for line in iter(build_ret.stdout.readline, ""):
         print(line.strip())
@@ -348,14 +376,22 @@ def cmake_build(board_info):
 
 
 def check_output(board_info):
-    elf_file = os.path.join(board_info['output_path'], "nuttx.elf")
-    nuttx_file = os.path.join(board_info['output_path'], "nuttx")
-    if os.path.exists(elf_file):
-        print(f"# successful generate {elf_file}")
-    elif os.path.exists(nuttx_file):
-        print(f"# successful generate {nuttx_file}")
+    if '/' in board_info['app_name']:
+        app_name = board_info['app_name'].split('/')[1]
     else:
-        error(f"# failed to generate {elf_file}")
+        app_name = board_info['app_name']
+    output_path = board_info['output_path']
+    elf_file = os.path.join(output_path, "nuttx.elf")
+    nuttx_file = os.path.join(output_path, "nuttx")
+    if os.path.exists(elf_file):
+        print(f"# successful generate {app_name}.elf")
+    elif os.path.exists(nuttx_file):
+        print(f"# successful generate {app_name}")
+    else:
+        error(f"# failed to generate {app_name}.elf")
+    for file in os.listdir(output_path):
+        if "nuttx" in file:
+            os.rename(os.path.join(output_path, file), os.path.join(output_path, app_name + file.split('nuttx')[1]))
 
 
 def run_board_build(board_info):
@@ -365,7 +401,9 @@ def run_board_build(board_info):
     sim = board_info['is_sim_build']
     maketool = board_info['maketool']
     compiler = board_info['compiler']
-    if 'codegen' in board_info["build_action"]:
+    if 'clean' in board_info["build_action"]:
+        run_clean(board_info)
+    elif 'codegen' in board_info["build_action"]:
         run_codegen(board_info)
     elif 'compile' in board_info["build_action"]:
         cmake_build(board_info)
