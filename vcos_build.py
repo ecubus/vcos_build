@@ -309,11 +309,11 @@ def gendate_cmake(board_info):
     if cur_platfm == 'windows':
         if maketool == "Ninja":
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
-                    -G \"{maketool}\" -DCMAKE_MAKE_PROGRAM={os.path.join(toolchain_path, "ninja.exe")} \
+                    -G \"{maketool}\" -DCMAKE_MAKE_PROGRAM=\"{os.path.join(toolchain_path, "ninja.exe")}\" \
                     -DBOARD_NAME={board_name} -DWIN32=1'
         elif maketool == "MinGW Makefiles":
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
-                    -G \"{maketool}\" -DCMAKE_MAKE_PROGRAM={os.path.join(toolchain_path, "make.exe")} \
+                    -G \"{maketool}\" -DCMAKE_MAKE_PROGRAM=\"{os.path.join(toolchain_path, "make.exe")}\" \
                     -DBOARD_NAME={board_name} -DWIN32=1'
         else:
             gendate_cmake_cmd = 'echo "[ERROR][gendate_cmake] Not support maketool type!"'
