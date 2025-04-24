@@ -65,6 +65,11 @@ def choice_board(app_name, board_name, updateType=False):
     codegen_boot = ''
     vcosproject_file_path = ''
     is_sim_build = 0
+    sim_datas = []
+    sim_arxml_path = ''
+    sim_board_config = ''
+    sim_defconfig_gen_path = ''
+    sim_config = ''
     if cur_platfm == 'windows':
         maketool = "MinGW Makefiles"
     elif cur_platfm == 'linux':
@@ -82,6 +87,14 @@ def choice_board(app_name, board_name, updateType=False):
                 codegen_boot = os.path.abspath(os.path.join(build_path, b["codegen_boot"]))
                 vcosproject_file_path = os.path.abspath(os.path.join(build_path, b["vcosproject_file_path"]))
                 break
+
+        # default sim data is semidrive
+        sim_datas = cfg["sim_datas"]
+        sim_data = sim_datas[0]
+        sim_arxml_path = sim_data["sim_arxml_path"]
+        sim_board_config = sim_data["sim_board_config"]
+        sim_defconfig_gen_path = os.path.abspath(os.path.join(build_path, sim_data["sim_defconfig_gen_path"]))
+        sim_config = sim_data["sim_config"]
 
         compiler = cfg['compiler']
         output_path = os.path.join(VCOS_ROOT_PATH, "..", "output", f"{app_name}_{board_name}_{compiler}")
@@ -109,9 +122,11 @@ def choice_board(app_name, board_name, updateType=False):
             "board_config": board_config,
             "maketool": maketool,
             "is_sim_build": is_sim_build,
-            "sim_board_cfg": cfg["sim_board_config"],
-            "sim_defconfig_gen_path": os.path.abspath(os.path.join(build_path, cfg["sim_defconfig_gen_path"])),
-            "sim_cfg": cfg["sim_config"],
+            "sim_arxml_path": sim_arxml_path,
+            "sim_board_cfg": sim_board_config,
+            "sim_defconfig_gen_path": sim_defconfig_gen_path,
+            "sim_cfg": sim_config,
+            "sim_datas": sim_datas,
             "extra_config": cfg["extra_config"]
         }
 
@@ -246,6 +261,8 @@ def run_codegen(board_info):
         print(line.strip())
     process.wait()
     print(f'[{app_name}:{board_name}][codegen] End.')
+    if board_info['is_sim_build']:
+        sim_arxml_adapt(board_info, revert=True)
     if process.returncode:
         sys.exit(1)
 
@@ -263,6 +280,21 @@ def change_vcosprojects_file(board_info):
     else:
         print('[ERROR][run_codegen] Vcosproject file is not exists: ', project_file)
         sys.exit(1)
+
+
+def set_sim_config(board_info):
+    board_name = board_info['board_name']
+    for sim_data in board_info['sim_datas']:
+        if board_name in sim_data['sim_board_config']:
+            board_info["sim_arxml_path"] = os.path.abspath(os.path.join(build_path, sim_data["sim_arxml_path"]))
+            board_info["sim_board_cfg"] = sim_data['sim_board_config']
+            board_info["sim_defconfig_gen_path"] = os.path.abspath(os.path.join(build_path, sim_data["sim_defconfig_gen_path"]))
+            board_info["sim_cfg"] = sim_data["sim_config"]
+            board_info['board_config'] = os.path.abspath(os.path.join(VCOS_ROOT_PATH, sim_data["sim_config"]))
+            break
+    sim_defconfig_gen(board_info)
+    sim_arxml_adapt(board_info)
+    return board_info
 
 
 def sim_defconfig_gen(board_info):
@@ -285,14 +317,39 @@ def sim_defconfig_gen(board_info):
     if sim_defconfig_gen_ret.returncode:
         print(f'[{app_name}:{board_name}] ret.stdout: {sim_defconfig_gen_ret.stdout}')
         print(f'[{app_name}:{board_name}] ret.stderr: {sim_defconfig_gen_ret.stderr}')
-        error(log = f'Step build_cmake failed, borard info: {board_info}')
+        error(log = f'Step sim_defconfig_gen failed, borard info: {board_info}')
+
+def sim_arxml_adapt(board_info, revert=False):
+    app_name = board_info['app_name']
+    board_name = board_info['board_name']
+    vcosproject_file_path = board_info['vcosproject_file_path']
+    if revert:
+        sim_arxml_path_ret = subprocess.Popen(
+                [sys.executable, board_info["sim_arxml_path"], "-m", vcosproject_file_path, "-r"],
+                stdout = subprocess.PIPE,
+                stderr = subprocess.STDOUT,
+                text = True
+            )
+    else:
+        sim_arxml_path_ret = subprocess.Popen(
+                [sys.executable, board_info["sim_arxml_path"], "-m", vcosproject_file_path],
+                stdout = subprocess.PIPE,
+                stderr = subprocess.STDOUT,
+                text = True
+            )
+    for line in iter(sim_arxml_path_ret.stdout.readline, ""):
+        print(line.strip())
+    sim_arxml_path_ret.wait()
+    if sim_arxml_path_ret.returncode:
+        print(f'[{app_name}:{board_name}] ret.stdout: {sim_arxml_path_ret.stdout}')
+        print(f'[{app_name}:{board_name}] ret.stderr: {sim_arxml_path_ret.stderr}')
+        error(log = f'Step sim_arxml_adapt failed, borard info: {board_info}')
+
 
 def gendate_cmake(board_info):
     compiler = board_info['compiler']
     set_compiler_path_env(compiler)
     symlink_dirs()
-    if board_info["is_sim_build"]:
-        sim_defconfig_gen(board_info)
     os.chdir(board_info["board_build_path"])
 
     board_name = board_info['board_name']
@@ -437,6 +494,7 @@ def run_main(args):
     if args.sim:
         board_info["is_sim_build"] = args.sim
         board_info["build_action"] = 'sim'
+        board_info = set_sim_config(board_info)
     if args.compiler:
         board_info["compiler"] = args.compiler
         board_info["build_action"] = 'compiler'
