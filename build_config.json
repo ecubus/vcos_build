@@ -56,9 +56,20 @@
     "build_action": "",
     "maketool": "make",
     "toolchain_path": "",
-    "sim_defconfig_gen_path": "../vendor/infineon/boards/sim/scripts/sim_defconfig.py",
-    "sim_board_config": "vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
-    "sim_config": "vendor/infineon/boards/sim/configs/vcos",
+    "sim_datas" : [
+        {
+            "sim_arxml_path": "../vendor/semidrive/boards/sim/scripts/sim_process.py",
+            "sim_defconfig_gen_path": "../vendor/semidrive/boards/sim/scripts/sim_defconfig.py",
+            "sim_board_config": "vendor/semidrive/boards/E3650_DEV_KIT/configs/vcos",
+            "sim_config": "vendor/semidrive/boards/sim/configs/vcos"
+        },
+        {
+            "sim_arxml_path": "../vendor/infineon/boards/sim/scripts/sim_process.py",
+            "sim_defconfig_gen_path": "../vendor/infineon/boards/sim/scripts/sim_defconfig.py",
+            "sim_board_config": "vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
+            "sim_config": "vendor/infineon/boards/sim/configs/vcos"
+        }
+    ],
     "extra_config": ["CONFIG_TRICORE_TOOLCHAIN_TASKING=y"],
     "symlink_data": [
         {
