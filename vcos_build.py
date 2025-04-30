@@ -499,13 +499,29 @@ def check_output(board_info):
                       os.path.join(output_path, app_name + file.split('nuttx')[1]).replace('\\', '/'))
 
 
+def pre_process(apps_dir):
+    if not os.path.exists(os.path.join(VCOS_ROOT_PATH, apps_dir)):
+        haloos_cfg_path = os.path.join(VCOS_ROOT_PATH, "..", "build", "haloos_build_config.json").replace('\\', '/')
+        if os.path.exists(haloos_cfg_path):
+            with open(haloos_cfg_path, 'r', encoding='utf-8') as f:
+                cfg = json.loads(f.read())
+                symlink_data = cfg["symlink_data"]
+                for dir in symlink_data:
+                    src = os.path.abspath(os.path.join(VCOS_ROOT_PATH, "..", dir["src"])).replace('\\', '/')
+                    dst = os.path.abspath(os.path.join(VCOS_ROOT_PATH, "..", dir["dst"])).replace('\\', '/')
+                    symlink_dir(src, dst)
+
+
 def run_board_build(board_info):
     board_name = board_info['board_name']
     app_name = board_info['app_name']
+    apps_dir = board_info['apps_dir']
     mode = board_info['build_mode']
     sim = board_info['is_sim_build']
     maketool = board_info['maketool']
     compiler = board_info['compiler']
+    pre_process(apps_dir)
+
     if 'clean' in board_info["build_action"]:
         run_clean(board_info)
     elif 'codegen' in board_info["build_action"]:
