@@ -1,5 +1,5 @@
 {
-    "boards": [
+    "apps": [
         {
             "app_name": "rt_demo",
             "board_name": "A2G_TC397_5V_TFT",
@@ -50,12 +50,14 @@
         }
     ],
     "is_sim_build": 0,
-    "build_mode": "",
-    "app_name": "",
-    "compiler": "gcc",
-    "build_action": "",
     "maketool": "make",
     "toolchain_path": "",
+    "build_mode": "",
+    "build_action": "",
+    "compiler": "gcc",
+    "extra_configs":{
+        "tasking": ["CONFIG_TRICORE_TOOLCHAIN_TASKING=y"]
+    },
     "sim_datas" : [
         {
             "sim_arxml_path": "../vendor/semidrive/boards/sim/scripts/sim_process.py",
@@ -70,7 +72,6 @@
             "sim_config": "vendor/infineon/boards/sim/configs/vcos"
         }
     ],
-    "extra_config": ["CONFIG_TRICORE_TOOLCHAIN_TASKING=y"],
     "symlink_data": [
         {
             "src": "components",

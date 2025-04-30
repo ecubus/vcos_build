@@ -9,9 +9,12 @@ import time
 import shutil
 
 cur_platfm = platform.system().lower()
-build_path = os.path.abspath(os.path.dirname(__file__))
-VCOS_ROOT_PATH = os.path.abspath(os.path.join(build_path, ".."))
-BOARDS_FUNC = lambda a: [b['board_name'] for b in a['boards']]
+build_path = os.path.abspath(os.path.dirname(__file__)).replace('\\', '/')
+VCOS_ROOT_PATH = os.path.abspath(os.path.join(build_path, "..")).replace('\\', '/')
+
+APPS_FUNC = lambda a: list(set(b['app_name'] for b in a['apps']))
+BOARDS_FUNC = lambda a: list(set(b['board_name'] for b in a['apps']))
+BOARDS_DICT_FUNC = lambda a: str([str(b['app_name']) + ':' + b['board_name'] for b in a['apps']])
 
 
 def error(log = "", exit_num = 127):
@@ -33,19 +36,20 @@ def new_command_parser():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     with open("./build_config.json", 'r', encoding='utf-8') as f:
         cfg = json.loads(f.read())
-        parser = argparse.ArgumentParser(description="VCOS Build")
-        parser.add_argument("-board_name", type=str, choices=BOARDS_FUNC(cfg), default=None, \
-                            help=str(BOARDS_FUNC(cfg)))
-        parser.add_argument("-app_name", type=str, default=None, help="application name, find from ./vcos/examples/")
-        parser.add_argument("-sim", type=int, choices=[0, 1], default=0, help="is sim build")
-        parser.add_argument("-compiler", type=str, choices=['gcc', 'ghs', 'tasking'], default=None, \
-                            help="compiler type")
+        parser = argparse.ArgumentParser(description="VCOS Build", formatter_class=argparse.RawTextHelpFormatter)
+        parser.add_argument("-app_name", type=str, required=True, choices=APPS_FUNC(cfg), default=None, \
+                            help="application name, find from ./vcos/examples/")
+        parser.add_argument("-board_name", type=str, required=True, choices=BOARDS_FUNC(cfg), default=None, \
+                            help=f"support board list, with app: {BOARDS_DICT_FUNC(cfg)}")
+        parser.add_argument("-compiler", type=str, choices=['gcc', 'ghs', 'tasking', 'arm'], default=None, \
+                            help="Compiler type")
         parser.add_argument("-mode", type=str, choices=['release', 'debug'], default=None, \
                             help="build config mode, include testcases or not")
-        parser.add_argument("-maketool", type=str, choices=['make', 'ninja'], default="make", \
-                            help="select make tool, default is [make]")
+        parser.add_argument("-sim", type=int, choices=[0, 1], default=None, help="is sim build")
         parser.add_argument("-update", action="store_true", default=False, help="update build config json file")
         parser.add_argument("-clean", action="store_true", default=False, help="clean output path")
+        parser.add_argument("-maketool", type=str, choices=['make', 'ninja'], default=None, \
+                            help="select make tool, default is [make]")
         parser.add_argument("-codegen", action="store_true", default=False, help="dynamic code generation")
         parser.add_argument("-gcmake", action="store_true", default=False, help="gendate cmake config")
         parser.add_argument("-fc", action="store_true", default=False, help="full compilation")
@@ -55,9 +59,9 @@ def new_command_parser():
     return parser
 
 
-def choice_board(app_name, board_name, updateType=False):
+def choice_board(app_name, board_name, compiler, updateType=False):
     toolchain_path = ''
-    compiler = ''
+    compiler_tmp = ''
     apps_dir = ''
     output_path = ''
     board_config = ''
@@ -70,6 +74,8 @@ def choice_board(app_name, board_name, updateType=False):
     sim_board_config = ''
     sim_defconfig_gen_path = ''
     sim_config = ''
+    extra_config = []
+    extra_configs = ''
     if cur_platfm == 'windows':
         maketool = "MinGW Makefiles"
     elif cur_platfm == 'linux':
@@ -77,41 +83,61 @@ def choice_board(app_name, board_name, updateType=False):
     else:
         maketool = ""
 
-    with open('./build_config.json', 'r', encoding='utf-8') as f:
+    buildTmpJson = f'{app_name.replace("/", "_")}_{board_name}_build_temp.json'
+    if os.path.exists('./tmp/' + buildTmpJson) and not updateType:
+        return read_json_data(f'./tmp/{buildTmpJson}')
+    elif updateType:
+        if os.path.exists('./tmp/' + buildTmpJson):
+            os.remove('./tmp/' + buildTmpJson)
+    elif not app_name or not board_name:
+        error(log='Please select board first, e.g.: python vcos_build.py -app_name xx -board_name xx')
+
+    with open("./build_config.json", 'r', encoding='utf-8') as f:
         cfg = json.loads(f.read())
-        for b in cfg['boards']:
+        if compiler:
+            compiler_tmp = compiler
+        else:
+            compiler_tmp = cfg['compiler']
+        extra_configs = cfg["extra_configs"]
+        x = False
+        for b in cfg['apps']:
             if b['board_name'] == board_name and b['app_name'] == app_name:
-                apps_dir = os.path.join("vcos_examples", app_name)
-                board_config = os.path.abspath(os.path.join(build_path, b["board_config"]))
-                board_build_path = os.path.abspath(os.path.join(build_path, b["board_build_path"]))
-                codegen_boot = os.path.abspath(os.path.join(build_path, b["codegen_boot"]))
-                vcosproject_file_path = os.path.abspath(os.path.join(build_path, b["vcosproject_file_path"]))
+                apps_dir = f"vcos_examples/{app_name}"
+                board_config = os.path.abspath(os.path.join(build_path, \
+                            f'{b["board_config"]}_{compiler_tmp}')).replace('\\', '/')
+                if not os.path.exists(board_config):
+                    os.makedirs(board_config)
+                else:
+                    shutil.rmtree(board_config)
+                    os.makedirs(board_config)
+                shutil.copy2(os.path.join(b["board_config"], 'defconfig').replace('\\', '/'), board_config)
+                board_build_path = os.path.abspath(os.path.join(build_path, b["board_build_path"])).replace('\\', '/')
+                codegen_boot = os.path.abspath(os.path.join(build_path, b["codegen_boot"])).replace('\\', '/')
+                vcosproject_file_path = os.path.abspath(os.path.join(build_path, \
+                                        b["vcosproject_file_path"])).replace('\\', '/')
+                x = True
                 break
+        if not x:
+            error(log='Please choose the correct app_name and board_name.')
 
         # default sim data is semidrive
         sim_datas = cfg["sim_datas"]
-        sim_data = sim_datas[0]
-        sim_arxml_path = sim_data["sim_arxml_path"]
-        sim_board_config = sim_data["sim_board_config"]
-        sim_defconfig_gen_path = os.path.abspath(os.path.join(build_path, sim_data["sim_defconfig_gen_path"]))
-        sim_config = sim_data["sim_config"]
+        for sim_data in sim_datas:
+            if board_name in sim_data['sim_board_config']:
+                sim_arxml_path = sim_data["sim_arxml_path"]
+                sim_board_config = sim_data["sim_board_config"]
+                sim_defconfig_gen_path = os.path.abspath(os.path.join(build_path, \
+                                        sim_data["sim_defconfig_gen_path"])).replace('\\', '/')
+                sim_config = sim_data["sim_config"]
 
-        compiler = cfg['compiler']
-        output_path = os.path.join(VCOS_ROOT_PATH, "..", "output", f"{app_name}_{board_name}_{compiler}")
-        buildTmpJson = f'{app_name.replace("/", "_")}_{board_name}_{compiler}_build_temp.json'
-        if os.path.exists('./tmp/' + buildTmpJson) and not updateType:
-            return read_json_data(f'./tmp/{buildTmpJson}')
-        elif updateType:
-            if os.path.exists('./tmp/' + buildTmpJson):
-                os.remove('./tmp/' + buildTmpJson)
-        elif not app_name or not board_name:
-            error(log='Please select board first, e.g.: python vcos_build.py -app_name xx -board_name xx -compiler xx')
+        output_path = os.path.join(VCOS_ROOT_PATH, "..", "output", \
+                                   f"{app_name}_{board_name}_{compiler_tmp}").replace('\\', '/')
 
         data = {
             "app_name": app_name,
             "board_name": board_name,
             "board_build_path": board_build_path,
-            "compiler": compiler,
+            "compiler": compiler_tmp,
             "build_mode": cfg['build_mode'],
             "apps_dir": apps_dir,
             "codegen_boot": codegen_boot,
@@ -127,7 +153,8 @@ def choice_board(app_name, board_name, updateType=False):
             "sim_defconfig_gen_path": sim_defconfig_gen_path,
             "sim_cfg": sim_config,
             "sim_datas": sim_datas,
-            "extra_config": cfg["extra_config"]
+            "extra_config": extra_config,
+            "extra_configs": extra_configs
         }
 
     if not os.path.exists('./tmp/'):
@@ -138,6 +165,20 @@ def choice_board(app_name, board_name, updateType=False):
 
     write_json_data(data, f'./tmp/{buildTmpJson}')
     return read_json_data(f'./tmp/{buildTmpJson}')
+
+
+def set_output_path(board_info):
+    compiler = board_info['compiler']
+    app_name = board_info['app_name']
+    board_name = board_info['board_name']
+    if board_info['is_sim_build']:
+        sim = '_sim'
+    else:
+        sim = ''
+
+    board_info["output_path"] = os.path.join(VCOS_ROOT_PATH, "..", "output", \
+                                             f'{app_name}_{board_name}_{compiler}{sim}').replace('\\', '/')
+    return board_info
 
 
 def set_compiler_path_env(compiler):
@@ -157,31 +198,32 @@ def set_compiler_path_env(compiler):
 
 def set_compiler_process(board_info):
     compiler = board_info['compiler']
-    app_name = board_info['app_name']
-    board_name = board_info['board_name']
     board_config = board_info['board_config']
-    if compiler == 'gcc':
+    if board_config.endswith(compiler):
         dst_path = board_config
-    elif compiler == 'tasking':
+    else:
         dst_path = f"{board_config}_{compiler}"
         if not os.path.exists(dst_path):
             os.makedirs(dst_path)
         else:
             shutil.rmtree(dst_path)
             os.makedirs(dst_path)
-        shutil.copy2(os.path.join(board_config, 'defconfig'), dst_path)
+        shutil.copy2(os.path.join(board_config, 'defconfig').replace('\\', '/'), dst_path)
     board_info['board_config'] = dst_path
-    extra_config = board_info['extra_config']
-    for extra_line in extra_config:
-        with open(os.path.join(dst_path, 'defconfig'), 'r', encoding='utf-8') as fr:
-            content = fr.readlines()
-            if extra_line not in content:
-                content += '\n' + extra_line + '\n'
-        with open(os.path.join(dst_path, 'defconfig'), 'w', encoding='utf-8') as fw:
-            fw.writelines(content)
+    extra_config = board_info['extra_configs'].get(compiler, None)
+    if extra_config:
+        board_info['extra_config'] = extra_config
+        for extra_line in extra_config:
+            with open(os.path.join(dst_path, 'defconfig').replace('\\', '/'), 'r', encoding='utf-8') as fr:
+                content = fr.readlines()
+                if extra_line not in content:
+                    content += '\n' + extra_line + '\n'
+            with open(os.path.join(dst_path, 'defconfig').replace('\\', '/'), 'w', encoding='utf-8') as fw:
+                fw.writelines(content)
+
     set_compiler_path_env(compiler)
-    board_info["output_path"] = os.path.join(VCOS_ROOT_PATH, "..", "output", f'{app_name}_{board_name}_{compiler}')
-    return board_info
+    return set_output_path(board_info)
+
 
 def set_make_tool_path(maketool, board_info):
     board_info["toolchain_path"] = ""
@@ -207,8 +249,8 @@ def symlink_dirs():
         cfg = json.loads(f.read())
         symlink_data = cfg["symlink_data"]
         for dir in symlink_data:
-            src = os.path.abspath(os.path.join(VCOS_ROOT_PATH, dir["src"]))
-            dst = os.path.abspath(os.path.join(VCOS_ROOT_PATH, dir["dst"]))
+            src = os.path.abspath(os.path.join(VCOS_ROOT_PATH, dir["src"])).replace('\\', '/')
+            dst = os.path.abspath(os.path.join(VCOS_ROOT_PATH, dir["dst"])).replace('\\', '/')
             symlink_dir(src, dst)
 
 
@@ -246,11 +288,12 @@ def run_codegen(board_info):
     board_build_path = board_info["board_build_path"]
     app_name = board_info['app_name']
     board_name = board_info['board_name']
-    os.chdir(board_build_path)
-
     codegen_boot = os.path.abspath(board_info['codegen_boot'])
     vcosproject_file_path = os.path.abspath(board_info['vcosproject_file_path'])
+    os.chdir(board_build_path)
+
     change_vcosprojects_file(board_info)
+
     process = subprocess.Popen(
             [sys.executable, "-u", codegen_boot, "-p", vcosproject_file_path, "Generate", "--force"],
             stdout = subprocess.PIPE,
@@ -286,15 +329,18 @@ def set_sim_config(board_info):
     board_name = board_info['board_name']
     for sim_data in board_info['sim_datas']:
         if board_name in sim_data['sim_board_config']:
-            board_info["sim_arxml_path"] = os.path.abspath(os.path.join(build_path, sim_data["sim_arxml_path"]))
+            board_info["sim_arxml_path"] = os.path.abspath(os.path.join(build_path, \
+                                        sim_data["sim_arxml_path"])).replace('\\', '/')
             board_info["sim_board_cfg"] = sim_data['sim_board_config']
-            board_info["sim_defconfig_gen_path"] = os.path.abspath(os.path.join(build_path, sim_data["sim_defconfig_gen_path"]))
+            board_info["sim_defconfig_gen_path"] = os.path.abspath(os.path.join(build_path, \
+                                        sim_data["sim_defconfig_gen_path"])).replace('\\', '/')
             board_info["sim_cfg"] = sim_data["sim_config"]
-            board_info['board_config'] = os.path.abspath(os.path.join(VCOS_ROOT_PATH, sim_data["sim_config"]))
+            board_info['board_config'] = os.path.abspath(os.path.join(VCOS_ROOT_PATH, \
+                                        sim_data["sim_config"])).replace('\\', '/')
             break
     sim_defconfig_gen(board_info)
     sim_arxml_adapt(board_info)
-    return board_info
+    return set_output_path(board_info)
 
 
 def sim_defconfig_gen(board_info):
@@ -365,24 +411,25 @@ def gendate_cmake(board_info):
 
     if cur_platfm == 'windows':
         if maketool == "Ninja":
+            toolchain = os.path.join(toolchain_path, "ninja.exe").replace('\\', '/')
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
-                    -G \"{maketool}\" -DCMAKE_MAKE_PROGRAM=\"{os.path.join(toolchain_path, "ninja.exe")}\" \
-                    -DBOARD_NAME={board_name} -DWIN32=1'
+                    -G \"{maketool}\" -DWIN32=1 -DCMAKE_MAKE_PROGRAM=\"{toolchain}\"'
         elif maketool == "MinGW Makefiles":
+            toolchain = os.path.join(toolchain_path, "ninja.exe").replace('\\', '/')
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
-                    -G \"{maketool}\" -DCMAKE_MAKE_PROGRAM=\"{os.path.join(toolchain_path, "make.exe")}\" \
-                    -DBOARD_NAME={board_name} -DWIN32=1'
+                    -G \"{maketool}\" -DWIN32=1 -DCMAKE_MAKE_PROGRAM=\"{toolchain}\"'
         else:
             gendate_cmake_cmd = 'echo "[ERROR][gendate_cmake] Not support maketool type!"'
     elif cur_platfm == 'linux':
         if compiler == 'gcc':
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
-                -DBOARD_NAME={board_name} -G \"{maketool}\"'
+                -G \"{maketool}\"'
         else:
-            gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
-                -DBOARD_NAME={board_name}'
+            gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir}'
     else:
         gendate_cmake_cmd = 'echo "[ERROR][gendate_cmake] Not support platform!"'
+    if "tests/examples" not in apps_dir:
+        gendate_cmake_cmd += f' -DBOARD_NAME={board_name}'
     print(f'[{app_name}:{board_name}] gendate_cmake: {gendate_cmake_cmd}')
     gendate_cmake_ret = subprocess.Popen(
             args = gendate_cmake_cmd,
@@ -438,8 +485,8 @@ def check_output(board_info):
     else:
         app_name = board_info['app_name']
     output_path = board_info['output_path']
-    elf_file = os.path.join(output_path, "nuttx.elf")
-    nuttx_file = os.path.join(output_path, "nuttx")
+    elf_file = os.path.join(output_path, "nuttx.elf").replace('\\', '/')
+    nuttx_file = os.path.join(output_path, "nuttx").replace('\\', '/')
     if os.path.exists(elf_file):
         print(f"# successful generate {app_name}.elf")
     elif os.path.exists(nuttx_file):
@@ -448,7 +495,8 @@ def check_output(board_info):
         error(f"# failed to generate {app_name}.elf")
     for file in os.listdir(output_path):
         if "nuttx" in file:
-            os.rename(os.path.join(output_path, file), os.path.join(output_path, app_name + file.split('nuttx')[1]))
+            os.rename(os.path.join(output_path, file).replace('\\', '/'), \
+                      os.path.join(output_path, app_name + file.split('nuttx')[1]).replace('\\', '/'))
 
 
 def run_board_build(board_info):
@@ -462,7 +510,7 @@ def run_board_build(board_info):
         run_clean(board_info)
     elif 'codegen' in board_info["build_action"]:
         run_codegen(board_info)
-    elif 'compile' in board_info["build_action"]:
+    elif '_compile' in board_info["build_action"]:
         cmake_build(board_info)
     elif 'gendate_cmake' == board_info["build_action"]:
         gendate_cmake(board_info)
@@ -485,7 +533,7 @@ def run_board_build(board_info):
 
 
 def run_main(args):
-    board_info = choice_board(args.app_name, args.board_name, args.update)
+    board_info = choice_board(args.app_name, args.board_name, args.compiler, args.update)
     if args.board_name and args.app_name:
         board_info["build_action"] = 'select_board'
     if args.mode:
@@ -522,8 +570,7 @@ def run_main(args):
 
     app_name = board_info['app_name']
     board_name = board_info['board_name']
-    compiler = board_info['compiler']
-    file = f'{app_name.replace("/", "_")}_{board_name}_{compiler}_build_temp.json'
+    file = f'{app_name.replace("/", "_")}_{board_name}_build_temp.json'
     write_json_data(board_info, f'./tmp/{file}')
     run_board_build(board_info)
 

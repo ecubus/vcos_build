@@ -27,29 +27,36 @@ python vcos_build.py -h
 **编译参数：**
 ```bash
 lixiang:~/vcos/buid$ python vcos_build.py -h
-usage: vcos_build.py [-h] [-board_name {A2G_TC397_5V_TFT,E3650_DEV_KIT}] [-app_name APP_NAME] [-sim {0,1}] [-compiler {gcc,ghs,tasking}] [-mode {release,debug}] [-maketool {make,ninja}] [-update] [-clean] [-codegen] [-gcmake] [-fc] [-ic] [-all]
+usage: vcos_build.py [-h]
+[-app_name {rt_demo,vbslite_demo/vbslite_node2,vbslite_demo/vbslite_node1}]
+[-board_name {A2G_TC397_5V_TFT,E3650_DEV_KIT}]
+[-compiler {gcc,ghs,tasking,arm}] [-mode {release,debug}]
+[-sim {0,1}] [-update] [-clean] [-maketool {make,ninja}]
+[-codegen] [-gcmake] [-fc] [-ic] [-all]
 
 VCOS Build
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -board_name {A2G_TC397_5V_TFT,E3650_DEV_KIT}
-                        ['A2G_TC397_5V_TFT', 'E3650_DEV_KIT']
-  -app_name APP_NAME    application name, find from ./vcos/examples/
-  -sim {0,1}            is sim build
-  -compiler {gcc,ghs,tasking}
-                        compiler type
-  -mode {release,debug}
-                        build config mode, include testcases or not
-  -maketool {make,ninja}
-                        select make tool, default is [make]
-  -update               update build config json file
-  -clean                clean output path
-  -codegen              dynamic code generation
-  -gcmake               gendate cmake config
-  -fc                   full compilation
-  -ic                   incremental compilation
-  -all                  all compilation steps, include '-codegen'、'-gcmake'、'-fc'
+-h, --help            show this help message and exit
+-app_name {rt_demo,vbslite_demo/vbslite_node2,vbslite_demo/vbslite_node1}
+                      application name, find from ./vcos/examples/
+-board_name {A2G_TC397_5V_TFT,E3650_DEV_KIT}
+                      support board list, with app: ['rt_demo:A2G_TC397_5V_TFT', 'rt_demo:E3650_DEV_KIT', 'vbslite_demo/vbslite_node1:A2G_TC397_5V_TFT', 'vbslite_demo/vbslite_node1:E3650_DEV_KIT', 
+                      'vbslite_demo/vbslite_node2:A2G_TC397_5V_TFT', 'vbslite_demo/vbslite_node2:E3650_DEV_KIT']
+-compiler {gcc,ghs,tasking,arm}
+                      Compiler type
+-mode {release,debug}
+                      build config mode, include testcases or not
+-sim {0,1}            is sim build
+-update               update build config json file
+-clean                clean output path
+-maketool {make,ninja}
+                      select make tool, default is [make]
+-codegen              dynamic code generation
+-gcmake               gendate cmake config
+-fc                   full compilation
+-ic                   incremental compilation
+-all                  all compilation steps, include '-codegen'、'-gcmake'、'-fc'
 ```
 **编译步骤：**
 ```bash
@@ -58,6 +65,7 @@ optional arguments:
 python vcos_build.py -app_name xx -board_name xx -compiler gcc     # 选择工程和编译器，生成 ./tmp/**_temp.json 保存编译信息
 python vcos_build.py -app_name xx -board_name xx -sim [0 | 1]      # 选择sim工程，0：非sim编译，1：sim编译
 python vcos_build.py -app_name xx -board_name xx -maketool xx      # 指定make toochain工具，[make | ninja]
+python vcos_build.py -app_name xx -board_name xx -update           # 强制更新 ./tmp/**_temp.json 中数据内容
 # 根据上述配置数据，进行编译
 python vcos_build.py -app_name xx -board_name xx -clean            # clean output
 python vcos_build.py -app_name xx -board_name xx -codegen          # 动态代码生成
@@ -67,7 +75,7 @@ python vcos_build.py -app_name xx -board_name xx -ic               # 增量编�
 ```
 ```bash
 ## 合并各步骤，一行命令进行编译 ##
-python vcos_build.py -app_name xx -borad_name xx -compiler gcc -sim [0 | 1] -maketool xx -all   # 仅支持全量
+python vcos_build.py -app_name xx -board_name xx -compiler gcc -sim [0 | 1] -maketool xx -all   # 仅支持全量
 ```
 **编译结果：**
 ```bash
