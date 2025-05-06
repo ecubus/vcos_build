@@ -415,7 +415,7 @@ def gendate_cmake(board_info):
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
                     -G \"{maketool}\" -DWIN32=1 -DCMAKE_MAKE_PROGRAM=\"{toolchain}\"'
         elif maketool == "MinGW Makefiles":
-            toolchain = os.path.join(toolchain_path, "ninja.exe").replace('\\', '/')
+            toolchain = os.path.join(toolchain_path, "make.exe").replace('\\', '/')
             gendate_cmake_cmd = f'cmake -B {output_path} -DBOARD_CONFIG={board_config} -DAPPS_DIR={apps_dir} \
                     -G \"{maketool}\" -DWIN32=1 -DCMAKE_MAKE_PROGRAM=\"{toolchain}\"'
         else:
