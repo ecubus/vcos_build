@@ -2,51 +2,101 @@
     "apps": [
         {
             "app_name": "rt_demo",
-            "board_name": "A2G_TC397_5V_TFT",
+            "board_name": "a2g_tc397_5v_tft",
             "board_build_path": "../kernel/nuttx",
-            "board_config": "../vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
+            "board_config": "../vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
             "vcosproject_file_path": "../../apps/rt_demo/platform_cfg/tc397_cfg/rt_demo.vcosproject"
         },
         {
             "app_name": "rt_demo",
-            "board_name": "E3650_DEV_KIT",
+            "board_name": "e3650_dev_kit",
             "board_build_path": "../kernel/nuttx",
-            "board_config": "../vendor/semidrive/boards/E3650_DEV_KIT/configs/vcos",
+            "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
             "vcosproject_file_path": "../../apps/rt_demo/platform_cfg/e3650_cfg/rt_demo.vcosproject"
         },
         {
             "app_name": "vbslite_demo/vbslite_node1",
-            "board_name": "A2G_TC397_5V_TFT",
+            "board_name": "a2g_tc397_5v_tft",
             "board_build_path": "../kernel/nuttx",
-            "board_config": "../vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
+            "board_config": "../vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
             "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node1/platform_cfg/tc397_cfg/vbslite_node1_tc397.vcosproject"
         },
         {
             "app_name": "vbslite_demo/vbslite_node1",
-            "board_name": "E3650_DEV_KIT",
+            "board_name": "e3650_dev_kit",
             "board_build_path": "../kernel/nuttx",
-            "board_config": "../vendor/semidrive/boards/E3650_DEV_KIT/configs/vcos",
+            "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
             "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node1/platform_cfg/e3650_cfg/vbslite_node1_e3650.vcosproject"
         },
         {
             "app_name": "vbslite_demo/vbslite_node2",
-            "board_name": "A2G_TC397_5V_TFT",
+            "board_name": "a2g_tc397_5v_tft",
             "board_build_path": "../kernel/nuttx",
-            "board_config": "../vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
+            "board_config": "../vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
             "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node2/platform_cfg/tc397_cfg/vbslite_node2_tc397.vcosproject"
         },
         {
             "app_name": "vbslite_demo/vbslite_node2",
-            "board_name": "E3650_DEV_KIT",
+            "board_name": "e3650_dev_kit",
             "board_build_path": "../kernel/nuttx",
-            "board_config": "../vendor/semidrive/boards/E3650_DEV_KIT/configs/vcos",
+            "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
             "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node2/platform_cfg/e3650_cfg/vbslite_node2_e3650.vcosproject"
+        },
+        {
+            "app_name": "multicore_com_demo",
+            "board_name": "a2g_tc397_5v_tft",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/multicore_com_demo/system_cfg/a2g_tc397_5v_tft/multicore_com_demo.vcosproject"
+        },
+        {
+            "app_name": "multicore_com_demo",
+            "board_name": "e3650_dev_kit",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/multicore_com_demo/system_cfg/e3650_dev_kit/multicore_com_demo.vcosproject"
+        },
+        {
+            "app_name": "nm_demo",
+            "board_name": "e3650_dev_kit",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/nm_demo/system_cfg/e3650_dev_kit/nm_demo.vcosproject"
+        },
+        {
+            "app_name": "tsyn_demo",
+            "board_name": "e3650_dev_kit",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/tsyn_demo/system_cfg/e3650_dev_kit/tsyn_demo.vcosproject"
+        },
+        {
+            "app_name": "isolate_demo",
+            "board_name": "a2g_tc397_5v_tft",
+            "apps_dir": "vcos_examples/isolate_demo",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/isolate_demo/system_cfg/a2g_tc397_5v_tft/isolate_demo.vcosproject"
+        },
+        {
+            "app_name": "isolate_demo",
+            "board_name": "e3650_dev_kit",
+            "apps_dir": "vcos_examples/isolate_demo",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/isolate_demo/system_cfg/e3650_dev_kit/isolate_demo.vcosproject"
         }
     ],
     "is_sim_build": 0,
@@ -62,13 +112,13 @@
         {
             "sim_arxml_path": "../vendor/semidrive/boards/sim/scripts/sim_process.py",
             "sim_defconfig_gen_path": "../vendor/semidrive/boards/sim/scripts/sim_defconfig.py",
-            "sim_board_config": "vendor/semidrive/boards/E3650_DEV_KIT/configs/vcos",
+            "sim_board_config": "vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
             "sim_config": "vendor/semidrive/boards/sim/configs/vcos"
         },
         {
             "sim_arxml_path": "../vendor/infineon/boards/sim/scripts/sim_process.py",
             "sim_defconfig_gen_path": "../vendor/infineon/boards/sim/scripts/sim_defconfig.py",
-            "sim_board_config": "vendor/infineon/boards/A2G_TC397_5V_TFT/configs/vcos",
+            "sim_board_config": "vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
             "sim_config": "vendor/infineon/boards/sim/configs/vcos"
         }
     ],
