@@ -6,7 +6,7 @@
             "board_build_path": "../kernel/nuttx",
             "board_config": "../vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
-            "vcosproject_file_path": "../../apps/rt_demo/platform_cfg/tc397_cfg/rt_demo.vcosproject"
+            "vcosproject_file_path": "../../apps/rt_demo/system_cfg/a2g_tc397_5v_tft/rt_demo.vcosproject"
         },
         {
             "app_name": "rt_demo",
@@ -14,7 +14,7 @@
             "board_build_path": "../kernel/nuttx",
             "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
-            "vcosproject_file_path": "../../apps/rt_demo/platform_cfg/e3650_cfg/rt_demo.vcosproject"
+            "vcosproject_file_path": "../../apps/rt_demo/system_cfg/e3650_dev_kit/rt_demo.vcosproject"
         },
         {
             "app_name": "vbslite_demo/vbslite_node1",
@@ -22,7 +22,7 @@
             "board_build_path": "../kernel/nuttx",
             "board_config": "../vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
-            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node1/platform_cfg/tc397_cfg/vbslite_node1_tc397.vcosproject"
+            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node1/system_cfg/a2g_tc397_5v_tft/vbslite_node1_tc397.vcosproject"
         },
         {
             "app_name": "vbslite_demo/vbslite_node1",
@@ -30,7 +30,7 @@
             "board_build_path": "../kernel/nuttx",
             "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
-            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node1/platform_cfg/e3650_cfg/vbslite_node1_e3650.vcosproject"
+            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node1/system_cfg/e3650_dev_kit/vbslite_node1_e3650.vcosproject"
         },
         {
             "app_name": "vbslite_demo/vbslite_node2",
@@ -38,7 +38,7 @@
             "board_build_path": "../kernel/nuttx",
             "board_config": "../vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
-            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node2/platform_cfg/tc397_cfg/vbslite_node2_tc397.vcosproject"
+            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node2/system_cfg/a2g_tc397_5v_tft/vbslite_node2_tc397.vcosproject"
         },
         {
             "app_name": "vbslite_demo/vbslite_node2",
@@ -46,7 +46,7 @@
             "board_build_path": "../kernel/nuttx",
             "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
-            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node2/platform_cfg/e3650_cfg/vbslite_node2_e3650.vcosproject"
+            "vcosproject_file_path": "../../apps/vbslite_demo/vbslite_node2/system_cfg/e3650_dev_kit/vbslite_node2_e3650.vcosproject"
         },
         {
             "app_name": "multicore_com_demo",
