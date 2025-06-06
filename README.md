@@ -64,6 +64,23 @@ optional arguments:
 -all                  all compilation steps, include '-codegen'、'-gcmake'、'-fc'
 ```
 
+> 提示：各 app 与 board 匹配使用不尽相同，另外对模拟器支持情况也有差异，详情见下表
+>
+> |app_name|board_name|sim|
+> |---|---|---|
+> |rt_demo|a2g_tc397_5v_tft|yes|
+> |rt_demo|e3650_dev_kit|yes|
+> |vbslite_demo/vbslite_node1|a2g_tc397_5v_tft|yes|
+> |vbslite_demo/vbslite_node1|e3650_dev_kit|yes|
+> |vbslite_demo/vbslite_node2|a2g_tc397_5v_tft|yes|
+> |vbslite_demo/vbslite_node2|e3650_dev_kit|yes|
+> |isolate_demo|a2g_tc397_5v_tft|no|
+> |isolate_demo|e3650_dev_kit|no|
+> |nm_demo|e3650_dev_kit|no|
+> |multicore_com_demo|a2g_tc397_5v_tft|yes|
+> |multicore_com_demo|e3650_dev_kit|yes|
+> |tsyn_demo|e3650_dev_kit|no|
+
 **编译步骤：**
 
 ```bash
