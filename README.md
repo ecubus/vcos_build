@@ -77,7 +77,7 @@ optional arguments:
 > |isolate_demo|a2g_tc397_5v_tft|no|
 > |isolate_demo|e3650_dev_kit|no|
 > |nm_demo|e3650_dev_kit|no|
-> |multicore_com_demo|a2g_tc397_5v_tft|yes|
+> |multicore_com_demo|a2g_tc397_5v_tft|no|
 > |multicore_com_demo|e3650_dev_kit|yes|
 > |tsyn_demo|e3650_dev_kit|no|
 
