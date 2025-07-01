@@ -1,43 +1,30 @@
-FROM ubuntu:focal
+FROM debian:buster-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN sed -i 's|archive.ubuntu.com|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list && \
-	sed -i 's|security.ubuntu.com|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list
-
-RUN apt-get update && \
-	apt-get install -y --no-install-recommends \
-	python3.8 \
-	python3.8-venv \
-	python3.8-dev \
+RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends \
+	python3 \
 	python3-pip \
-	build-essential \
-	gcc \
-	libc6-dev \
+	python3-venv \
 	socat \
 	can-utils \
 	kmod \
 	iproute2 \
+	net-tools \
 	tcpdump \
 	wireshark \
+	iputils-ping \
 	git \
 	vim \
 	gdb \
 	minicom \
-	iputils-ping \
-	&& \
-	ln -sf /usr/bin/python3.8 /usr/bin/python3 && \
-	ln -sf /usr/bin/python3.8 /usr/bin/python && \
-	ln -sf /usr/bin/pip3 /usr/bin/pip && \
-	rm -rf /var/lib/apt/lists/*
-
-ENV Python3_EXECUTABLE=/usr/bin/python3.8 \
-	Python3_ROOT_DIR=/usr
-
-RUN git config --global --add safe.directory "*"
+	util-linux \
+	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home
-ENV INTERACTOR=/dev/vttyM0
+ENV SHELL__PORT=/dev/vttyM0
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh

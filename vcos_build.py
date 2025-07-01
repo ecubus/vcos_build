@@ -305,6 +305,7 @@ def run_codegen(board_info):
     process.wait()
     print(f'[{app_name}:{board_name}][codegen] End.')
     if board_info['is_sim_build']:
+        sim_defconfig_gen(board_info)
         sim_arxml_adapt(board_info, revert=True)
     if process.returncode:
         sys.exit(1)
@@ -338,21 +339,28 @@ def set_sim_config(board_info):
             board_info['board_config'] = os.path.abspath(os.path.join(VCOS_ROOT_PATH, \
                                         sim_data["sim_config"])).replace('\\', '/')
             break
-    sim_defconfig_gen(board_info)
+    sim_defconfig_copy(board_info)
     sim_arxml_adapt(board_info)
     return set_output_path(board_info)
 
 
-def sim_defconfig_gen(board_info):
+def sim_defconfig_copy(board_info):
     compiler = board_info['compiler']
+    if compiler == 'gcc':
+        dest_cfg = board_info["board_config"]
+    else:
+        dest_cfg = board_info["board_config"] + "_" + compiler
+    shutil.copy2(
+        os.path.join(VCOS_ROOT_PATH, board_info["sim_board_cfg"], 'defconfig'),
+        os.path.join(dest_cfg, 'defconfig'))
+
+def sim_defconfig_gen(board_info):
     app_name = board_info['app_name']
     board_name = board_info['board_name']
-    if compiler == 'gcc':
-        dest_cfg = board_info["sim_cfg"]
-    else:
-        dest_cfg = board_info["sim_cfg"] + "_" + compiler
+
     sim_defconfig_gen_ret = subprocess.Popen(
-            [sys.executable, board_info["sim_defconfig_gen_path"], "-s", board_info["sim_board_cfg"], "-d", dest_cfg],
+            [sys.executable, board_info["sim_defconfig_gen_path"],
+             "-s", board_info["board_config"], "-d", board_info["board_config"], "-i", board_info['vcosproject_file_path']],
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
             text = True
