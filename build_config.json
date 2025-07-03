@@ -130,64 +130,84 @@
     ],
     "symlink_data": [
         {
-            "src": "components",
-            "dst": "apps/components"
+            "src": "vcos/components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/udp.c",
+            "dst": "vcos/components/communication/net_protocols/udp/udp.c"
         },
         {
-            "src": "drivers",
-            "dst": "apps/drivers"
+            "src": "vcos/components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/tcp.c",
+            "dst": "vcos/components/communication/net_protocols/tcp/tcp.c"
         },
         {
-            "src": "examples",
-            "dst": "apps/vcos_examples"
+            "src": "vcos/components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/tcp_in.c",
+            "dst": "vcos/components/communication/net_protocols/tcp/tcp_in.c"
         },
         {
-            "src": "tests",
-            "dst": "apps/tests"
+            "src": "vcos/components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/tcp_out.c",
+            "dst": "vcos/components/communication/net_protocols/tcp/tcp_out.c"
         },
         {
-            "src": "vendor",
-            "dst": "apps/vendor"
+            "src": "vcos/components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/etharp.c",
+            "dst": "vcos/components/communication/net_protocols/arp/etharp.c"
         },
         {
-            "src": "external",
-            "dst": "apps/external"
+            "src": "vcos/components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/icmp.c",
+            "dst": "vcos/components/communication/net_protocols/icmp/icmp.c"
         },
         {
-            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/udp.c",
-            "dst": "components/communication/net_protocols/udp/udp.c"
+            "src": "vcos/components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/ip4.c",
+            "dst": "vcos/components/communication/net_protocols/ipv4/ip4.c"
         },
         {
-            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/tcp.c",
-            "dst": "components/communication/net_protocols/tcp/tcp.c"
+            "src": "vcos/components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/ip4_addr.c",
+            "dst": "vcos/components/communication/net_protocols/ipv4/ip4_addr.c"
         },
         {
-            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/tcp_in.c",
-            "dst": "components/communication/net_protocols/tcp/tcp_in.c"
+            "src": "vcos/components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/ip4_frag.c",
+            "dst": "vcos/components/communication/net_protocols/ipv4/ip4_frag.c"
         },
         {
-            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/tcp_out.c",
-            "dst": "components/communication/net_protocols/tcp/tcp_out.c"
+            "src": "apps/rt_demo",
+            "dst": "vcos/examples/rt_demo"
         },
         {
-            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/etharp.c",
-            "dst": "components/communication/net_protocols/arp/etharp.c"
+            "src": "apps/isolate_demo",
+            "dst": "vcos/examples/isolate_demo"
         },
         {
-            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/icmp.c",
-            "dst": "components/communication/net_protocols/icmp/icmp.c"
+            "src": "apps/mempool_demo",
+            "dst": "vcos/examples/mempool_demo"
         },
         {
-            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/ip4.c",
-            "dst": "components/communication/net_protocols/ipv4/ip4.c"
+            "src": "apps/vbslite_demo",
+            "dst": "vcos/examples/vbslite_demo"
         },
         {
-            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/ip4_addr.c",
-            "dst": "components/communication/net_protocols/ipv4/ip4_addr.c"
+            "src": "vbs/vbslite/mvbs",
+            "dst": "vcos/external/mvbs"
         },
         {
-            "src": "components/communication/external/lwip/lwip-STABLE-2_1_3_RELEASE/src/core/ipv4/ip4_frag.c",
-            "dst": "components/communication/net_protocols/ipv4/ip4_frag.c"
+            "src": "vcos/components",
+            "dst": "vcos/apps/components"
+        },
+        {
+            "src": "vcos/drivers",
+            "dst": "vcos/apps/drivers"
+        },
+        {
+            "src": "vcos/examples",
+            "dst": "vcos/apps/vcos_examples"
+        },
+        {
+            "src": "vcos/tests",
+            "dst": "vcos/apps/tests"
+        },
+        {
+            "src": "vcos/vendor",
+            "dst": "vcos/apps/vendor"
+        },
+        {
+            "src": "vcos/external",
+            "dst": "vcos/apps/external"
         }
     ]
 }

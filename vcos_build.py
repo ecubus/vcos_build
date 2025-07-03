@@ -249,8 +249,8 @@ def symlink_dirs():
         cfg = json.loads(f.read())
         symlink_data = cfg["symlink_data"]
         for dir in symlink_data:
-            src = os.path.abspath(os.path.join(VCOS_ROOT_PATH, dir["src"])).replace('\\', '/')
-            dst = os.path.abspath(os.path.join(VCOS_ROOT_PATH, dir["dst"])).replace('\\', '/')
+            src = os.path.abspath(os.path.join(VCOS_ROOT_PATH, '..', dir["src"])).replace('\\', '/')
+            dst = os.path.abspath(os.path.join(VCOS_ROOT_PATH, '..', dir["dst"])).replace('\\', '/')
             symlink_dir(src, dst)
 
 
@@ -403,7 +403,6 @@ def sim_arxml_adapt(board_info, revert=False):
 def gendate_cmake(board_info):
     compiler = board_info['compiler']
     set_compiler_path_env(compiler)
-    symlink_dirs()
     os.chdir(board_info["board_build_path"])
 
     board_name = board_info['board_name']
@@ -508,16 +507,8 @@ def check_output(board_info):
 
 
 def pre_process(apps_dir):
-    if not os.path.exists(os.path.join(VCOS_ROOT_PATH, apps_dir)):
-        haloos_cfg_path = os.path.join(VCOS_ROOT_PATH, "..", "build", "haloos_build_config.json").replace('\\', '/')
-        if os.path.exists(haloos_cfg_path):
-            with open(haloos_cfg_path, 'r', encoding='utf-8') as f:
-                cfg = json.loads(f.read())
-                symlink_data = cfg["symlink_data"]
-                for dir in symlink_data:
-                    src = os.path.abspath(os.path.join(VCOS_ROOT_PATH, "..", dir["src"])).replace('\\', '/')
-                    dst = os.path.abspath(os.path.join(VCOS_ROOT_PATH, "..", dir["dst"])).replace('\\', '/')
-                    symlink_dir(src, dst)
+    if not os.path.exists(os.path.join(VCOS_ROOT_PATH, 'apps', apps_dir)):
+        symlink_dirs()
 
 
 def run_board_build(board_info):

@@ -44,10 +44,10 @@ VCOS Build
 
 optional arguments:
 -h, --help            show this help message and exit
--app_name {rt_demo,vbslite_demo/vbslite_node1,tsyn_demo,isolate_demo,multicore_com_demo,vbslite_demo/vbslite_node2,nm_demo}
+-app_name {rt_demo,vbslite_demo/vbslite_node1,tsyn_demo,isolate_demo,multicore_com_demo,vbslite_demo/vbslite_node2,nm_demo,mempool_demo}
                       application name, find from ./vcos/examples/
 -board_name {e3650_dev_kit,a2g_tc397_5v_tft}
-                      support board list, with app: ['rt_demo:a2g_tc397_5v_tft', 'rt_demo:e3650_dev_kit', 'vbslite_demo/vbslite_node1:a2g_tc397_5v_tft', 'vbslite_demo/vbslite_node1:e3650_dev_kit', 'vbslite_demo/vbslite_node2:a2g_tc397_5v_tft', 'vbslite_demo/vbslite_node2:e3650_dev_kit', 'multicore_com_demo:a2g_tc397_5v_tft', 'multicore_com_demo:e3650_dev_kit', 'nm_demo:e3650_dev_kit', 'tsyn_demo:e3650_dev_kit', 'isolate_demo:a2g_tc397_5v_tft', 'isolate_demo:e3650_dev_kit']
+                      support board list, with app: ['rt_demo:a2g_tc397_5v_tft', 'rt_demo:e3650_dev_kit', 'vbslite_demo/vbslite_node1:a2g_tc397_5v_tft', 'vbslite_demo/vbslite_node1:e3650_dev_kit', 'vbslite_demo/vbslite_node2:a2g_tc397_5v_tft', 'vbslite_demo/vbslite_node2:e3650_dev_kit', 'multicore_com_demo:a2g_tc397_5v_tft', 'multicore_com_demo:e3650_dev_kit', 'nm_demo:e3650_dev_kit', 'tsyn_demo:e3650_dev_kit', 'isolate_demo:a2g_tc397_5v_tft', 'isolate_demo:e3650_dev_kit', 'mempool_demo:a2g_tc397_5v_tft']
 -compiler {gcc,ghs,tasking,arm}
                       Compiler type
 -mode {release,debug}
@@ -80,6 +80,7 @@ optional arguments:
 > |multicore_com_demo|a2g_tc397_5v_tft|no|
 > |multicore_com_demo|e3650_dev_kit|yes|
 > |tsyn_demo|e3650_dev_kit|no|
+> |mempool_demo|a2g_tc397_5v_tft|no|
 
 **编译步骤：**
 
