@@ -298,7 +298,8 @@ def run_codegen(board_info):
             [sys.executable, "-u", codegen_boot, "-p", vcosproject_file_path, "Generate", "--force"],
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
-            text = True
+            text = True,
+            encoding='utf-8'
         )
     for line in iter(process.stdout.readline, ""):
         print(line.strip())
@@ -363,7 +364,8 @@ def sim_defconfig_gen(board_info):
              "-s", board_info["board_config"], "-d", board_info["board_config"], "-i", board_info['vcosproject_file_path']],
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
-            text = True
+            text = True,
+            encoding='utf-8'
         )
     for line in iter(sim_defconfig_gen_ret.stdout.readline, ""):
         print(line.strip())
@@ -382,14 +384,16 @@ def sim_arxml_adapt(board_info, revert=False):
                 [sys.executable, board_info["sim_arxml_path"], "-m", vcosproject_file_path, "-r"],
                 stdout = subprocess.PIPE,
                 stderr = subprocess.STDOUT,
-                text = True
+                text = True,
+                encoding='utf-8'
             )
     else:
         sim_arxml_path_ret = subprocess.Popen(
                 [sys.executable, board_info["sim_arxml_path"], "-m", vcosproject_file_path],
                 stdout = subprocess.PIPE,
                 stderr = subprocess.STDOUT,
-                text = True
+                text = True,
+                encoding='utf-8'
             )
     for line in iter(sim_arxml_path_ret.stdout.readline, ""):
         print(line.strip())
@@ -443,7 +447,8 @@ def gendate_cmake(board_info):
             shell = True,
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
-            text = True
+            text = True,
+            encoding='utf-8'
         )
     for line in iter(gendate_cmake_ret.stdout.readline, ""):
         print(line.strip())
@@ -473,7 +478,8 @@ def cmake_build(board_info):
             shell = True,
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
-            text = True
+            text = True,
+            encoding='utf-8'
         )
     for line in iter(build_ret.stdout.readline, ""):
         print(line.strip())
@@ -613,7 +619,8 @@ if __name__ == "__main__":
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
             text = True,
-            env=environ
+            env=environ,
+            encoding='utf-8'
         )
         for line in iter(process.stdout.readline, ""):
             print(line.strip())
