@@ -297,12 +297,14 @@ def run_codegen(board_info):
     process = subprocess.Popen(
             [sys.executable, "-u", codegen_boot, "-p", vcosproject_file_path, "Generate", "--force"],
             stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            text = True,
-            encoding='utf-8'
+            stderr = subprocess.STDOUT
         )
-    for line in iter(process.stdout.readline, ""):
-        print(line.strip())
+    for line in process.stdout:
+        try:
+            decoded_line = line.decode("utf-8")
+        except UnicodeDecodeError:
+            decoded_line = line.decode("gbk", errors="replace")
+        print(decoded_line, end="")
     process.wait()
     print(f'[{app_name}:{board_name}][codegen] End.')
     if board_info['is_sim_build']:
@@ -363,12 +365,14 @@ def sim_defconfig_gen(board_info):
             [sys.executable, board_info["sim_defconfig_gen_path"],
              "-s", board_info["board_config"], "-d", board_info["board_config"], "-i", board_info['vcosproject_file_path']],
             stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            text = True,
-            encoding='utf-8'
+            stderr = subprocess.STDOUT
         )
-    for line in iter(sim_defconfig_gen_ret.stdout.readline, ""):
-        print(line.strip())
+    for line in sim_defconfig_gen_ret.stdout:
+        try:
+            decoded_line = line.decode("utf-8")
+        except UnicodeDecodeError:
+            decoded_line = line.decode("gbk", errors="replace")
+        print(decoded_line, end="")
     sim_defconfig_gen_ret.wait()
     if sim_defconfig_gen_ret.returncode:
         print(f'[{app_name}:{board_name}] ret.stdout: {sim_defconfig_gen_ret.stdout}')
@@ -383,20 +387,20 @@ def sim_arxml_adapt(board_info, revert=False):
         sim_arxml_path_ret = subprocess.Popen(
                 [sys.executable, board_info["sim_arxml_path"], "-m", vcosproject_file_path, "-r"],
                 stdout = subprocess.PIPE,
-                stderr = subprocess.STDOUT,
-                text = True,
-                encoding='utf-8'
+                stderr = subprocess.STDOUT
             )
     else:
         sim_arxml_path_ret = subprocess.Popen(
                 [sys.executable, board_info["sim_arxml_path"], "-m", vcosproject_file_path],
                 stdout = subprocess.PIPE,
-                stderr = subprocess.STDOUT,
-                text = True,
-                encoding='utf-8'
+                stderr = subprocess.STDOUT
             )
-    for line in iter(sim_arxml_path_ret.stdout.readline, ""):
-        print(line.strip())
+    for line in sim_arxml_path_ret.stdout:
+        try:
+            decoded_line = line.decode("utf-8")
+        except UnicodeDecodeError:
+            decoded_line = line.decode("gbk", errors="replace")
+        print(decoded_line, end="")
     sim_arxml_path_ret.wait()
     if sim_arxml_path_ret.returncode:
         print(f'[{app_name}:{board_name}] ret.stdout: {sim_arxml_path_ret.stdout}')
@@ -446,12 +450,14 @@ def gendate_cmake(board_info):
             args = gendate_cmake_cmd,
             shell = True,
             stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            text = True,
-            encoding='utf-8'
+            stderr = subprocess.STDOUT
         )
-    for line in iter(gendate_cmake_ret.stdout.readline, ""):
-        print(line.strip())
+    for line in gendate_cmake_ret.stdout:
+        try:
+            decoded_line = line.decode("utf-8")
+        except UnicodeDecodeError:
+            decoded_line = line.decode("gbk", errors="replace")
+        print(decoded_line, end="")
     gendate_cmake_ret.wait()
     if gendate_cmake_ret.returncode:
         print(f'[{app_name}:{board_name}] ret.stdout: {gendate_cmake_ret.stdout}')
@@ -477,12 +483,14 @@ def cmake_build(board_info):
             args = build_command,
             shell = True,
             stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            text = True,
-            encoding='utf-8'
+            stderr = subprocess.STDOUT
         )
-    for line in iter(build_ret.stdout.readline, ""):
-        print(line.strip())
+    for line in build_ret.stdout:
+        try:
+            decoded_line = line.decode("utf-8")
+        except UnicodeDecodeError:
+            decoded_line = line.decode("gbk", errors="replace")
+        print(decoded_line, end="")
     build_ret.wait()
     if build_ret.returncode:
         print(f'[{app_name}:{board_name}] ret.stdout: {build_ret.stdout}')
@@ -618,10 +626,12 @@ if __name__ == "__main__":
             [python_path, "-u"] + sys.argv,
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT,
-            text = True,
-            env=environ,
-            encoding='utf-8'
+            env=environ
         )
-        for line in iter(process.stdout.readline, ""):
-            print(line.strip())
+        for line in process.stdout:
+            try:
+                decoded_line = line.decode("utf-8")
+            except UnicodeDecodeError:
+                decoded_line = line.decode("gbk", errors="replace")
+            print(decoded_line, end="")
         process.wait()
