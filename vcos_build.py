@@ -521,8 +521,7 @@ def check_output(board_info):
 
 
 def pre_process(apps_dir):
-    if not os.path.exists(os.path.join(VCOS_ROOT_PATH, 'apps', apps_dir)):
-        symlink_dirs()
+    symlink_dirs()
 
 
 def run_board_build(board_info):
