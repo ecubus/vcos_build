@@ -12,6 +12,13 @@ log_info() {
     echo "[INFO] \$1" >&2
 }
 
+# 检查实时调度权限
+if chrt -f 99 echo "RT test" >/dev/null 2>&1; then
+    log_info "实时调度权限: 已启用"
+else
+    echo "WARN: 实时调度权限受限，请使用 --cap-add=SYS_NICE 运行容器" >&2
+fi
+
 # 网络配置
 log_info "配置网络设备..."
 if ! ip link show br0 >/dev/null 2>&1; then
