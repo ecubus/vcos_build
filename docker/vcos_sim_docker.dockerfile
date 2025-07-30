@@ -2,6 +2,8 @@ FROM debian:bullseye-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN dpkg --add-architecture i386
+
 RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends \
@@ -21,6 +23,12 @@ RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.li
 	gdb \
 	minicom \
 	util-linux \
+	libc6:i386 \
+	libstdc++6:i386 \
+	libgcc1:i386 \
+	libc6-dev-i386 \
+	lib32z1 \
+	lib32ncurses6 \
 	&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home

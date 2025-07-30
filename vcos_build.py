@@ -74,8 +74,7 @@ def choice_board(app_name, board_name, compiler, updateType=False):
     sim_board_config = ''
     sim_defconfig_gen_path = ''
     sim_config = ''
-    extra_config = []
-    extra_configs = ''
+
     if cur_platfm == 'windows':
         maketool = "MinGW Makefiles"
     elif cur_platfm == 'linux':
@@ -98,19 +97,12 @@ def choice_board(app_name, board_name, compiler, updateType=False):
             compiler_tmp = compiler
         else:
             compiler_tmp = cfg['compiler']
-        extra_configs = cfg["extra_configs"]
+
         x = False
         for b in cfg['apps']:
             if b['board_name'] == board_name and b['app_name'] == app_name:
                 apps_dir = f"vcos_examples/{app_name}"
-                board_config = os.path.abspath(os.path.join(build_path, \
-                            f'{b["board_config"]}_{compiler_tmp}')).replace('\\', '/')
-                if not os.path.exists(board_config):
-                    os.makedirs(board_config)
-                else:
-                    shutil.rmtree(board_config)
-                    os.makedirs(board_config)
-                shutil.copy2(os.path.join(b["board_config"], 'defconfig').replace('\\', '/'), board_config)
+                board_config = os.path.abspath(os.path.join(build_path, b["board_config"])).replace('\\', '/')
                 board_build_path = os.path.abspath(os.path.join(build_path, b["board_build_path"])).replace('\\', '/')
                 codegen_boot = os.path.abspath(os.path.join(build_path, b["codegen_boot"])).replace('\\', '/')
                 vcosproject_file_path = os.path.abspath(os.path.join(build_path, \
@@ -152,9 +144,7 @@ def choice_board(app_name, board_name, compiler, updateType=False):
             "sim_board_cfg": sim_board_config,
             "sim_defconfig_gen_path": sim_defconfig_gen_path,
             "sim_cfg": sim_config,
-            "sim_datas": sim_datas,
-            "extra_config": extra_config,
-            "extra_configs": extra_configs
+            "sim_datas": sim_datas
         }
 
     if not os.path.exists('./tmp/'):
@@ -198,29 +188,6 @@ def set_compiler_path_env(compiler):
 
 def set_compiler_process(board_info):
     compiler = board_info['compiler']
-    board_config = board_info['board_config']
-    if board_config.endswith(compiler):
-        dst_path = board_config
-    else:
-        dst_path = f"{board_config}_{compiler}"
-        if not os.path.exists(dst_path):
-            os.makedirs(dst_path)
-        else:
-            shutil.rmtree(dst_path)
-            os.makedirs(dst_path)
-        shutil.copy2(os.path.join(board_config, 'defconfig').replace('\\', '/'), dst_path)
-    board_info['board_config'] = dst_path
-    extra_config = board_info['extra_configs'].get(compiler, None)
-    if extra_config:
-        board_info['extra_config'] = extra_config
-        for extra_line in extra_config:
-            with open(os.path.join(dst_path, 'defconfig').replace('\\', '/'), 'r', encoding='utf-8') as fr:
-                content = fr.readlines()
-                if extra_line not in content:
-                    content += '\n' + extra_line + '\n'
-            with open(os.path.join(dst_path, 'defconfig').replace('\\', '/'), 'w', encoding='utf-8') as fw:
-                fw.writelines(content)
-
     set_compiler_path_env(compiler)
     return set_output_path(board_info)
 
@@ -293,9 +260,11 @@ def run_codegen(board_info):
     os.chdir(board_build_path)
 
     change_vcosprojects_file(board_info)
-
+    gen_cmd = [sys.executable, "-u", codegen_boot, "-p", vcosproject_file_path, "Generate", "--force"]
+    if board_info.get("is_sim_build", False):
+        gen_cmd.append("--sim")
     process = subprocess.Popen(
-            [sys.executable, "-u", codegen_boot, "-p", vcosproject_file_path, "Generate", "--force"],
+            gen_cmd,
             stdout = subprocess.PIPE,
             stderr = subprocess.STDOUT
         )

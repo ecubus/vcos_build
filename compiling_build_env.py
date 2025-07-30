@@ -18,7 +18,7 @@ LINUX_TOOLS = [{
     "packages": [
         "build-essential", "cmake", "ninja-build", "bison", "flex", "gettext", "texinfo", "libncurses5-dev",
         "libncursesw5-dev", "gperf", "automake", "libtool", "pkg-config", "genromfs", "libgmp-dev", "libmpc-dev",
-        "libmpfr-dev", "libisl-dev", "binutils-dev", "libelf-dev", "libexpat-dev", "gcc-multilib", "g++-multilib",
+        "libmpfr-dev", "libisl-dev", "binutils-dev", "libelf-dev", "libexpat-dev", "gcc-10-multilib", "g++-10-multilib",
         "picocom", "u-boot-tools", "util-linux", "p7zip-full", "apt-transport-https", "ca-certificates", "curl",
         "software-properties-common"
     ],

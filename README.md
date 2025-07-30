@@ -33,35 +33,35 @@ python vcos_build.py -h
 
 ```bash
 lixiang:~/vcos/buid$ python vcos_build.py -h
-usage: vcos_build.py [-h]
-[-app_name  {rt_demo,vbslite_demo/vbslite_node1,tsyn_demo,isolate_demo,multicore_com_demo,vbslite_demo/vbslite_node2,nm_demo}]
-[-board_name {e3650_dev_kit,a2g_tc397_5v_tft}]
-[-compiler {gcc,ghs,tasking,arm}] [-mode {release,debug}]
-[-sim {0,1}] [-update] [-clean] [-maketool {make,ninja}]
-[-codegen] [-gcmake] [-fc] [-ic] [-all]
+usage: vcos_build.py [-h] -app_name
+                     {multicore_com_demo,diag_demo,nm_demo,rt_demo,vbslite_demo/vbslite_node1,tsyn_demo,vbslite_demo/vbslite_node2,mempool_demo,isolate_demo}
+                     -board_name {a2g_tc397_5v_tft,e3650_dev_kit}
+                     [-compiler {gcc,ghs,tasking,arm}] [-mode {release,debug}]
+                     [-sim {0,1}] [-update] [-clean] [-maketool {make,ninja}]
+                     [-codegen] [-gcmake] [-fc] [-ic] [-all]
 
 VCOS Build
 
 optional arguments:
--h, --help            show this help message and exit
--app_name {rt_demo,vbslite_demo/vbslite_node1,tsyn_demo,isolate_demo,multicore_com_demo,vbslite_demo/vbslite_node2,nm_demo,mempool_demo}
-                      application name, find from ./vcos/examples/
--board_name {e3650_dev_kit,a2g_tc397_5v_tft}
-                      support board list, with app: ['rt_demo:a2g_tc397_5v_tft', 'rt_demo:e3650_dev_kit', 'vbslite_demo/vbslite_node1:a2g_tc397_5v_tft', 'vbslite_demo/vbslite_node1:e3650_dev_kit', 'vbslite_demo/vbslite_node2:a2g_tc397_5v_tft', 'vbslite_demo/vbslite_node2:e3650_dev_kit', 'multicore_com_demo:a2g_tc397_5v_tft', 'multicore_com_demo:e3650_dev_kit', 'nm_demo:e3650_dev_kit', 'tsyn_demo:e3650_dev_kit', 'isolate_demo:a2g_tc397_5v_tft', 'isolate_demo:e3650_dev_kit', 'mempool_demo:a2g_tc397_5v_tft']
--compiler {gcc,ghs,tasking,arm}
-                      Compiler type
--mode {release,debug}
-                      build config mode, include testcases or not
--sim {0,1}            is sim build
--update               update build config json file
--clean                clean output path
--maketool {make,ninja}
-                      select make tool, default is [make]
--codegen              dynamic code generation
--gcmake               gendate cmake config
--fc                   full compilation
--ic                   incremental compilation
--all                  all compilation steps, include '-codegen'、'-gcmake'、'-fc'
+  -h, --help            show this help message and exit
+  -app_name {multicore_com_demo,diag_demo,nm_demo,rt_demo,vbslite_demo/vbslite_node1,tsyn_demo,vbslite_demo/vbslite_node2,mempool_demo,isolate_demo}
+                        application name, find from ./vcos/examples/
+  -board_name {a2g_tc397_5v_tft,e3650_dev_kit}
+                        support board list, with app: ['rt_demo:a2g_tc397_5v_tft', 'rt_demo:e3650_dev_kit', 'vbslite_demo/vbslite_node1:a2g_tc397_5v_tft', 'vbslite_demo/vbslite_node1:e3650_dev_kit', 'vbslite_demo/vbslite_node2:a2g_tc397_5v_tft', 'vbslite_demo/vbslite_node2:e3650_dev_kit', 'multicore_com_demo:a2g_tc397_5v_tft', 'multicore_com_demo:e3650_dev_kit', 'nm_demo:e3650_dev_kit', 'tsyn_demo:e3650_dev_kit', 'isolate_demo:a2g_tc397_5v_tft', 'isolate_demo:e3650_dev_kit', 'diag_demo:e3650_dev_kit', 'mempool_demo:a2g_tc397_5v_tft']
+  -compiler {gcc,ghs,tasking,arm}
+                        Compiler type
+  -mode {release,debug}
+                        build config mode, include testcases or not
+  -sim {0,1}            is sim build
+  -update               update build config json file
+  -clean                clean output path
+  -maketool {make,ninja}
+                        select make tool, default is [make]
+  -codegen              dynamic code generation
+  -gcmake               gendate cmake config
+  -fc                   full compilation
+  -ic                   incremental compilation
+  -all                  all compilation steps, include '-codegen'、'-gcmake'、'-fc'
 ```
 
 > 提示：各 app 与 board 匹配使用不尽相同，另外对模拟器支持情况也有差异，详情见下表
@@ -80,6 +80,7 @@ optional arguments:
 > |multicore_com_demo|a2g_tc397_5v_tft|no|
 > |multicore_com_demo|e3650_dev_kit|yes|
 > |tsyn_demo|e3650_dev_kit|no|
+> |diag_demo|e3650_dev_kit|no|
 > |mempool_demo|a2g_tc397_5v_tft|no|
 
 **编译步骤：**

@@ -97,6 +97,14 @@
             "vcosproject_file_path": "../../apps/isolate_demo/system_cfg/e3650_dev_kit/isolate_demo.vcosproject"
         },
         {
+            "app_name": "diag_demo",
+            "board_name": "e3650_dev_kit",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/diag_demo/system_cfg/e3650_dev_kit/diag_demo.vcosproject"
+        },
+        {
             "app_name": "mempool_demo",
             "board_name": "a2g_tc397_5v_tft",
             "board_build_path": "../kernel/nuttx",
@@ -111,9 +119,6 @@
     "build_mode": "",
     "build_action": "",
     "compiler": "gcc",
-    "extra_configs":{
-        "tasking": ["CONFIG_TRICORE_TOOLCHAIN_TASKING=y"]
-    },
     "sim_datas" : [
         {
             "sim_arxml_path": "../vendor/semidrive/boards/sim/scripts/sim_process.py",
@@ -126,6 +131,12 @@
             "sim_defconfig_gen_path": "../vendor/infineon/boards/sim/scripts/sim_defconfig.py",
             "sim_board_config": "vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
             "sim_config": "vendor/infineon/boards/sim/configs/vcos"
+        },
+        {
+            "sim_arxml_path": "../vendor/horizon_robotics/boards/sim/scripts/sim_process.py",
+            "sim_defconfig_gen_path": "../vendor/horizon_robotics/boards/sim/scripts/sim_defconfig.py",
+            "sim_board_config": "vendor/horizon_robotics/boards/j6e_adpro_4_0/configs/vcos",
+            "sim_config": "vendor/horizon_robotics/boards/sim/configs/vcos"
         }
     ],
     "symlink_data": [
