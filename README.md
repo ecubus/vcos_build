@@ -94,7 +94,7 @@ python vcos_build.py -app_name xx -board_name xx -maketool xx      # 指定make 
 python vcos_build.py -app_name xx -board_name xx -update           # 强制更新 ./tmp/**_temp.json 中数据内容
 # 根据上述配置数据，进行编译
 python vcos_build.py -app_name xx -board_name xx -clean            # clean output
-python vcos_build.py -app_name xx -board_name xx -codegen          # 动态代码生成
+python vcos_build.py -app_name xx -board_name xx -codegen          # 动态代码生成，等同于UI界面操作生成代码。如已通过UI操作代码生成，可跳过此命令
 python vcos_build.py -app_name xx -board_name xx -gcmake           # 生成 cmake 编译依赖配置
 python vcos_build.py -app_name xx -board_name xx -fc               # 全量编译生成所需二进制镜像文件
 python vcos_build.py -app_name xx -board_name xx -ic               # 增量编译生成所需二进制镜像文件
@@ -104,6 +104,9 @@ python vcos_build.py -app_name xx -board_name xx -ic               # 增量编�
 ## 合并各步骤，一行命令进行编译 ##
 python vcos_build.py -app_name xx -board_name xx -compiler gcc -sim [0 | 1] -maketool xx -all   # 仅支持全量
 ```
+
+> 提示：
+> `vcos_build.py` 脚本在编译时会在同目录下生成一个名为 `./tmp/{app_name}_{board_name}_build_temp.json` 的临时json文件，该文件中存放对应app+board编译步骤信息，如多次编译同一个app时出现报错，可以删除此json文件，或者增加 -update 参数来强制更新json文件内容
 
 **编译结果：**
 
