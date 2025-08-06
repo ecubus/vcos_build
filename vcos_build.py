@@ -41,7 +41,7 @@ def new_command_parser():
                             help="application name, find from ./vcos/examples/")
         parser.add_argument("-board_name", type=str, required=True, choices=BOARDS_FUNC(cfg), default=None, \
                             help=f"support board list, with app: {BOARDS_DICT_FUNC(cfg)}")
-        parser.add_argument("-compiler", type=str, choices=['gcc', 'ghs', 'tasking', 'arm'], default=None, \
+        parser.add_argument("-compiler", type=str, choices=['gcc', 'ghs', 'tasking', 'arm','HighTec'], default=None, \
                             help="Compiler type")
         parser.add_argument("-mode", type=str, choices=['release', 'debug'], default=None, \
                             help="build config mode, include testcases or not")
@@ -180,7 +180,9 @@ def set_compiler_path_env(compiler):
         compiler_path = os.environ['TSK_LICENSE_PATH']
     elif compiler == 'ghs' and os.environ.get("GHS_LICENSE_PATH", None):
         compiler_path = os.environ['GHS_LICENSE_PATH']
-
+    elif compiler == 'HighTec' and os.environ.get("HIGHTEC_LICENSE_PATH", None):
+        compiler_path = os.environ['HIGHTEC_LICENSE_PATH']
+    
     os.environ["PATH"] = compiler_path + os.pathsep + os.environ["PATH"]
     print(f'[Compiler] compiler [{compiler}] and path is [{compiler_path}].')
     return compiler_path
