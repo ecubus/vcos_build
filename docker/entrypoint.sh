@@ -12,8 +12,13 @@ log_info() {
     echo "[INFO] \$1" >&2
 }
 
+# 检查CPU配置
+log_info "检查CPU配置..."
+log_info "可用CPU核心: $(nproc)"
+log_info "CPU亲和性掩码: $(taskset -p $$ | awk '{print $NF}')"
+
 # 检查实时调度权限
-if chrt -f 99 echo "RT test" >/dev/null 2>&1; then
+if chrt -r 50 echo "RT test" >/dev/null 2>&1; then
     log_info "实时调度权限: 已启用"
 else
     echo "WARN: 实时调度权限受限，请使用 --cap-add=SYS_NICE 运行容器" >&2
@@ -47,7 +52,7 @@ fi
 
 # 创建 vcan 设备
 log_info "创建 vcan 设备..."
-for i in 0 1 2 3 4 5 6 7; do
+for i in 0 1 2 3 4 5 6 7 8 9; do
     if ! ip link show vcan$i >/dev/null 2>&1; then
         if ! ip link add dev vcan$i type vcan; then
             echo "WARN: 创建 vcan$i 失败" >&2
