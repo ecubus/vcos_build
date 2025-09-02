@@ -77,6 +77,7 @@ def choice_board(app_name, board_name, compiler, updateType=False):
 
     if cur_platfm == 'windows':
         maketool = "MinGW Makefiles"
+        toolchain_path = os.environ.get("MAKE_TOOL_PATH", None)
     elif cur_platfm == 'linux':
         maketool = "Unix Makefiles"
     else:

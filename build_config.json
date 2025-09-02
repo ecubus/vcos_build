@@ -213,10 +213,6 @@
             "dst": "vcos/apps/tests"
         },
         {
-            "src": "vcos/vendor",
-            "dst": "vcos/apps/vendor"
-        },
-        {
             "src": "vcos/external",
             "dst": "vcos/apps/external"
         }
