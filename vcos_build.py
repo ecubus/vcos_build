@@ -17,9 +17,16 @@ BOARDS_FUNC = lambda a: list(set(b['board_name'] for b in a['apps']))
 BOARDS_DICT_FUNC = lambda a: str([str(b['app_name']) + ':' + b['board_name'] for b in a['apps']])
 
 
-def error(log = "", exit_num = 127):
-    print("[ERROR]: " + log)
-    sys.exit(exit_num)
+def error(log = "", exit_num = 1):
+    print(f"[ERROR]: {log}, exit: {exit_num}")
+    try:
+        sys.exit(exit_num)
+    except SystemExit:
+        print(f"SystemExit caught, exiting now. exit: {exit_num}")
+        raise
+    except Exception as e:
+        print(f"Unexpected exception caught: {e}")
+        raise
 
 def write_json_data(data, jsonName):
     with open(jsonName, 'w', encoding='utf-8') as f:
@@ -30,6 +37,8 @@ def read_json_data(jsonName):
         with open(jsonName, 'r', encoding='utf-8') as b:
             info = json.loads(b.read())
         return info
+    else:
+        return {}
 
 
 def new_command_parser():
@@ -172,11 +181,16 @@ def set_output_path(board_info):
     return board_info
 
 
-def set_compiler_path_env(compiler):
+def set_compiler_path_env(compiler, board_name):
     compiler_path = ''
     # 如果配置了环境变量则使用环境变量配置的编译器路径
-    if compiler == 'gcc' and os.environ.get("GCC_LICENSE_PATH", None):
-        compiler_path = os.environ['GCC_LICENSE_PATH']
+    if compiler == 'gcc':
+        if board_name in ["e3650_dev_kit"] and os.environ.get("GCC_ARM_LICENSE_PATH", None):
+            compiler_path = os.environ['GCC_ARM_LICENSE_PATH']
+        elif board_name in ["a2g_tc397_5v_tft"] and os.environ.get("GCC_TRICORE_LICENSE_PATH", None):
+            compiler_path = os.environ['GCC_TRICORE_LICENSE_PATH']
+        else:
+            compiler_path = os.environ['GCC_LICENSE_PATH']
     elif compiler == 'tasking' and os.environ.get("TSK_LICENSE_PATH", None):
         compiler_path = os.environ['TSK_LICENSE_PATH']
     elif compiler == 'ghs' and os.environ.get("GHS_LICENSE_PATH", None):
@@ -191,7 +205,8 @@ def set_compiler_path_env(compiler):
 
 def set_compiler_process(board_info):
     compiler = board_info['compiler']
-    set_compiler_path_env(compiler)
+    board_name = board_info['board_name']
+    set_compiler_path_env(compiler, board_name)
     return set_output_path(board_info)
 
 
@@ -289,7 +304,8 @@ def run_codegen(board_info):
 def change_vcosprojects_file(board_info):
     project_file = board_info['vcosproject_file_path']
     compiler = board_info['compiler']
-    compiler_path = set_compiler_path_env(compiler)
+    board_name = board_info['board_name']
+    compiler_path = set_compiler_path_env(compiler, board_name)
     if os.path.exists(project_file):
         with open(project_file, 'r', encoding="utf-8") as f:
             projson = json.loads(f.read())
@@ -381,10 +397,8 @@ def sim_arxml_adapt(board_info, revert=False):
 
 
 def gendate_cmake(board_info):
-    compiler = board_info['compiler']
-    set_compiler_path_env(compiler)
     os.chdir(board_info["board_build_path"])
-
+    compiler = board_info['compiler']
     board_name = board_info['board_name']
     app_name = board_info['app_name']
     apps_dir = board_info['apps_dir']
@@ -392,6 +406,8 @@ def gendate_cmake(board_info):
     board_config = board_info['board_config']
     maketool = board_info['maketool']
     toolchain_path = board_info['toolchain_path']
+
+    set_compiler_path_env(compiler, board_name)
 
     if os.path.exists(output_path):
         shutil.rmtree(output_path)
@@ -439,13 +455,13 @@ def gendate_cmake(board_info):
 
 
 def cmake_build(board_info):
-    compiler = board_info['compiler']
-    set_compiler_path_env(compiler)
     os.chdir(board_info["board_build_path"])
 
     app_name = board_info['app_name']
     board_name = board_info['board_name']
     output_path = board_info['output_path']
+    compiler = board_info['compiler']
+    set_compiler_path_env(compiler, board_name)
     if board_info["build_action"] == "incre_compile":
         build_command = f"cmake --build {output_path} -j12"
     else:
@@ -606,3 +622,5 @@ if __name__ == "__main__":
                 decoded_line = line.decode("gbk", errors="replace")
             print(decoded_line, end="")
         process.wait()
+        if process.returncode:
+            sys.exit(process.returncode)
