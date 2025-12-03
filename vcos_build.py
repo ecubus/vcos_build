@@ -189,7 +189,7 @@ def set_compiler_path_env(compiler, board_name):
             compiler_path = os.environ['GCC_ARM_LICENSE_PATH']
         elif board_name in ["a2g_tc397_5v_tft"] and os.environ.get("GCC_TRICORE_LICENSE_PATH", None):
             compiler_path = os.environ['GCC_TRICORE_LICENSE_PATH']
-        else:
+        elif os.environ.get("GCC_TRICORE_LICENSE_PATH", None):
             compiler_path = os.environ['GCC_LICENSE_PATH']
     elif compiler == 'tasking' and os.environ.get("TSK_LICENSE_PATH", None):
         compiler_path = os.environ['TSK_LICENSE_PATH']
