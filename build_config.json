@@ -65,6 +65,14 @@
             "vcosproject_file_path": "../examples/multicore_com_demo/system_cfg/e3650_dev_kit/multicore_com_demo.vcosproject"
         },
         {
+            "app_name": "multicore_com_demo",
+            "board_name": "fc7300f8mdt_evb",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/flagchip/boards/fc7300/fc7300f8mdt_evb/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/multicore_com_demo/system_cfg/fc7300f8mdt_evb/multicore_com_demo.vcosproject"
+        },
+        {
             "app_name": "nm_demo",
             "board_name": "e3650_dev_kit",
             "board_build_path": "../kernel/nuttx",
