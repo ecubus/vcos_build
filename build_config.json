@@ -119,6 +119,38 @@
             "board_config": "../vendor/infineon/boards/a2g_tc397_5v_tft/configs/vcos",
             "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
             "vcosproject_file_path": "../../apps/mempool_demo/system_cfg/a2g_tc397_5v_tft/mempool_demo.vcosproject"
+        },
+        {
+            "app_name": "minimal_system",
+            "board_name": "e3650_dev_kit",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/semidrive/boards/e3650_dev_kit/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/minimal_system/system_cfg/e3650_dev_kit/minimal_system.vcosproject"
+        },
+        {
+            "app_name": "minimal_system5",
+            "board_name": "pc",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/ecubus/boards/pc/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/minimal_system5/system_cfg/pc/minimal_system5.vcosproject"
+        },
+        {
+            "app_name": "minimal_system9",
+            "board_name": "pc",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/ecubus/boards/pc/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/minimal_system9/system_cfg/pc/minimal_system9.vcosproject"
+        },
+        {
+            "app_name": "minimal_system13",
+            "board_name": "pc",
+            "board_build_path": "../kernel/nuttx",
+            "board_config": "../vendor/ecubus/boards/pc/configs/vcos",
+            "codegen_boot": "../vcos_studio/configurator/cmd_api/auto_cli.py",
+            "vcosproject_file_path": "../examples/minimal_system13/system_cfg/pc/minimal_system13.vcosproject"
         }
     ],
     "is_sim_build": 0,
@@ -127,7 +159,7 @@
     "build_mode": "",
     "build_action": "",
     "compiler": "gcc",
-    "sim_datas" : [
+    "sim_datas": [
         {
             "sim_arxml_path": "../vendor/semidrive/boards/sim/scripts/sim_process.py",
             "sim_defconfig_gen_path": "../vendor/semidrive/boards/sim/scripts/sim_defconfig.py",

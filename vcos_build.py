@@ -309,7 +309,15 @@ def change_vcosprojects_file(board_info):
     if os.path.exists(project_file):
         with open(project_file, 'r', encoding="utf-8") as f:
             projson = json.loads(f.read())
-            projson["compiler"] = compiler
+            # Native PC: Studio plugins require vs20xx / PC_Common; host NuttX
+            # build uses gcc. Do not rewrite the project compiler when building
+            # with gcc on board "pc".
+            if board_name == 'pc' and compiler == 'gcc':
+                print('[codegen] PC board: keep vcosproject compiler='
+                      f'{projson.get("compiler", "vs20xx")} '
+                      '(host cmake/toolchain uses gcc)')
+            else:
+                projson["compiler"] = compiler
             projson['path']['compiler_path'] = compiler_path
         write_json_data(projson, project_file)
     else:
@@ -508,7 +516,19 @@ def check_output(board_info):
                       os.path.join(output_path, app_name + file.split('nuttx')[1]).replace('\\', '/'))
 
 
+def ensure_venv_bin_on_path():
+    """NuttX cmake needs kconfiglib scripts (olddefconfig) from the project venv."""
+    venv_bin = os.path.join(VCOS_ROOT_PATH, '.venv', 'Scripts' if cur_platfm == 'windows' else 'bin')
+    venv_bin = os.path.abspath(venv_bin).replace('\\', '/')
+    if os.path.isdir(venv_bin):
+        path_now = os.environ.get('PATH', '')
+        if venv_bin not in path_now.split(os.pathsep):
+            os.environ['PATH'] = venv_bin + os.pathsep + path_now
+            print(f'[env] prepended venv bin to PATH: {venv_bin}')
+
+
 def pre_process(apps_dir):
+    ensure_venv_bin_on_path()
     symlink_dirs()
 
 
@@ -526,7 +546,14 @@ def run_board_build(board_info):
         run_clean(board_info)
     elif 'codegen' in board_info["build_action"]:
         run_codegen(board_info)
-    elif '_compile' in board_info["build_action"]:
+    elif 'gcmake_and_compile' == board_info["build_action"]:
+        # -gcmake together with -fc/-ic (no codegen). Native PC keeps Studio gen_data.
+        gendate_cmake(board_info)
+        board_info["build_action"] = board_info.get("compile_kind", "full_compile")
+        cmake_build(board_info)
+    elif board_info["build_action"] in ('full_compile', 'incre_compile') or (
+            '_compile' in board_info["build_action"]
+            and board_info["build_action"] != 'gcmake_and_compile'):
         cmake_build(board_info)
     elif 'gendate_cmake' == board_info["build_action"]:
         gendate_cmake(board_info)
@@ -569,14 +596,17 @@ def run_main(args):
 
     if args.clean:
         board_info["build_action"] = 'clean'
+    elif args.all:
+        board_info["build_action"] = 'all'
+    elif args.gcmake and (args.fc or args.ic):
+        board_info["build_action"] = 'gcmake_and_compile'
+        board_info["compile_kind"] = 'full_compile' if args.fc else 'incre_compile'
     elif args.fc:
         board_info["build_action"] = 'full_compile'
     elif args.ic:
         board_info["build_action"] = 'incre_compile'
     elif args.gcmake:
         board_info["build_action"] = 'gendate_cmake'
-    elif args.all:
-        board_info["build_action"] = 'all'
     elif args.codegen:
         board_info["build_action"] = 'codegen'
     else:
